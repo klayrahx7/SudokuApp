@@ -8,9 +8,10 @@ public class Cell {
     private int currentValue;
     private boolean isHighlighted;
     private boolean isSelected;
-    private boolean isStartingValue;
+    private boolean isInitialValue;
     private boolean isHint;
     private boolean isSolved;
+    private boolean isCorrect;
     private int[] possibleValues;
 
     public Cell()
@@ -29,11 +30,11 @@ public class Cell {
         }
         else
         {
-            this.currentValue = -1;
+            this.currentValue = 0;
         }
         this.isHighlighted = false;
         this.isSelected = false;
-        this.possibleValues = new int[9];
+        this.possibleValues = new int[] {0,0,0,0,0,0,0,0,0};
     }
 
     public Cell(Cell newCell)
@@ -41,7 +42,7 @@ public class Cell {
         this.currentValue = newCell.getCurrentValue();
         this.isHighlighted = newCell.isHighlighted();
         this.isSelected = newCell.isSelected();
-        this.possibleValues = new int[9];
+        this.possibleValues = newCell.getPossibleValues();
     }
 
     public Cell(int newCurrentValue, boolean isHighlighted, boolean isSelected, int[] possibleValues)
@@ -52,18 +53,34 @@ public class Cell {
         this.possibleValues = possibleValues;
     }
 
-    private boolean isInteger(String s) {
+    private boolean isInteger(String s)
+    {
         return isInteger(s,10);
     }
 
-    private boolean isInteger(String s, int radix) {
-        if(s.isEmpty()) return false;
-        for(int i = 0; i < s.length(); i++) {
-            if(i == 0 && s.charAt(i) == '-') {
-                if(s.length() == 1) return false;
-                else continue;
+    private boolean isInteger(String s, int radix)
+    {
+        if(s.isEmpty())
+        {
+            return false;
+        }
+        for(int i = 0; i < s.length(); i++)
+        {
+            if(i == 0 && s.charAt(i) == '-')
+            {
+                if(s.length() == 1)
+                {
+                    return false;
+                }
+                else
+                {
+                    continue;
+                }
             }
-            if(Character.digit(s.charAt(i),radix) < 0) return false;
+            if(Character.digit(s.charAt(i),radix) < 0)
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -100,12 +117,12 @@ public class Cell {
         this.possibleValues = possibleValues;
     }
 
-    public boolean isStartingValue() {
-        return isStartingValue;
+    public boolean isInitialValue() {
+        return isInitialValue;
     }
 
-    public void setStartingValue(boolean startingValue) {
-        isStartingValue = startingValue;
+    public void setInitialValue(boolean initialValue) {
+        isInitialValue = initialValue;
     }
 
     public boolean isHint() {
@@ -122,5 +139,13 @@ public class Cell {
 
     public void setSolved(boolean solved) {
         isSolved = solved;
+    }
+
+    public boolean isCorrect() {
+        return isCorrect;
+    }
+
+    public void setCorrect(boolean correct) {
+        isCorrect = correct;
     }
 }
