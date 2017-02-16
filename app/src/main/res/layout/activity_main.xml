@@ -1,17 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cpsc463sudoku.sudoku.MainActivity">
+    tools:context=".MainActivity"
+    android:clickable="true">
+    <ImageView
+        android:layout_height="match_parent"
+        android:cropToPadding="true"
+        android:minWidth="@dimen/activity_horizontal_margin"
+        android:minHeight="@dimen/activity_vertical_margin"
+        android:src="@drawable/backgroundhome"
+        android:layout_width="match_parent"
+        android:scaleType="fitXY"
+        android:alpha=".7" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foregroundGravity="center_horizontal|center_vertical"
+        android:gravity="center">
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="316dp"
+            android:id="@+id/gridLayout"
+            android:columnCount="3"
+            android:rowCount="6"
+            android:layout_gravity="center|center_vertical|center_horizontal"
+            android:foregroundGravity="center"
+            android:orientation="horizontal"
+            android:backgroundTint="#2D3142">
+            <Button
+                android:id="@+id/startNewGameButton"
+                android:layout_gravity="center|top|left"
+                android:scaleType="fitCenter"
+                android:layout_column="0"
+                android:layout_row="0"
+                android:minWidth="90dp"
+                android:minHeight="80dp"
+                android:maxWidth="100dp"
+                android:maxHeight="100dp"
+                android:maxLength="80"
+                android:layout_margin="10dp"
+                android:backgroundTint="#B0D7FF"
+                android:background="@drawable/ic_numeric_0_box_multiple_outline_black_48dp" />
+
+            <Button
+                android:id="@+id/continueGame"
+                android:layout_gravity="center|left|top"
+                android:layout_column="2"
+                android:layout_row="0"
+                android:minWidth="80dp"
+                android:minHeight="80dp"
+                android:maxWidth="100dp"
+                android:maxHeight="100dp"
+                android:maxLength="80"
+                android:layout_margin="10dp"
+                android:backgroundTint="#B0D7FF"
+                android:background="@drawable/ic_numeric_8_box_multiple_outline_black_48dp" />
+            <TextView
+                android:id="@+id/continueText"
+                android:layout_gravity="center_vertical|center"
+                android:text="@string/resumeText"
+                android:scaleType="fitCenter"
+                android:layout_column="2"
+                android:layout_row="1"
+                android:minWidth="50dp"
+                android:minHeight="50dp"
+                android:maxWidth="60dp"
+                android:maxHeight="60dp"
+                android:layout_margin="5dp"
+                android:textAllCaps="true"
+                android:textAlignment="center"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/Settings"
+                android:layout_gravity="center|left|top"
+                android:layout_column="0"
+                android:layout_row="3"
+                android:minWidth="80dp"
+                android:minHeight="80dp"
+                android:maxWidth="100dp"
+                android:maxHeight="100dp"
+                android:maxLength="80"
+                android:layout_margin="10dp"
+                android:backgroundTint="#B0D7FF"
+                android:background="@drawable/ic_settings_black_48dp" />
+            <TextView
+                android:id="@+id/settingsText"
+                android:layout_gravity="center_vertical|center"
+                android:text="@string/Settings"
+                android:layout_column="0"
+                android:layout_row="4"
+                android:minWidth="60dp"
+                android:minHeight="50dp"
+                android:maxWidth="70dp"
+                android:maxHeight="70dp"
+                android:layout_margin="5dp"
+                android:textAllCaps="true"
+                android:textAlignment="center"
+                android:textColor="#000000" />
+
+
+
+            <Button
+                android:id="@+id/Scores"
+                android:layout_gravity="center|left|top"
+                android:layout_column="2"
+                android:layout_row="3"
+                android:minWidth="80dp"
+                android:minHeight="80dp"
+                android:maxWidth="100dp"
+                android:maxHeight="100dp"
+                android:maxLength="80"
+                android:layout_margin="10dp"
+                android:backgroundTint="#B0D7FF"
+                android:background="@drawable/ic_book_open_variant_black_48dp" />
+
+            <TextView
+                android:id="@+id/scoresText"
+                android:layout_gravity="center_vertical|center"
+                android:text="@string/Scores"
+                android:scaleType="fitCenter"
+                android:layout_column="2"
+                android:layout_row="4"
+                android:minWidth="50dp"
+                android:minHeight="50dp"
+                android:maxWidth="60dp"
+                android:maxHeight="60dp"
+                android:layout_margin="5dp"
+                android:textAllCaps="true"
+                android:textAlignment="center"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/startText"
+                android:layout_gravity="center_vertical|center"
+                android:text="@string/startText"
+                android:scaleType="fitCenter"
+                android:layout_column="0"
+                android:layout_row="1"
+                android:minWidth="50dp"
+                android:minHeight="50dp"
+                android:maxWidth="60dp"
+                android:maxHeight="60dp"
+                android:layout_margin="5dp"
+                android:textAllCaps="true"
+                android:textAlignment="center"
+                android:textColor="#000000" />
+        </GridLayout>
+    </LinearLayout>
+</FrameLayout>

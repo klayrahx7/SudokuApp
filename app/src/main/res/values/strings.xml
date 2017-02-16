@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Sudoku</string>
+
+    <string name="startText">Play \nSudoku</string>
+    <string name="resumeText">Resume \nSudoku</string>
+    <string name="Settings">Settings</string>
+    <string name="Scores">Scores \nList</string>
 </resources>
