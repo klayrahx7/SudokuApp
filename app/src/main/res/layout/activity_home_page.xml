@@ -24,7 +24,7 @@
 
         <GridLayout
             android:layout_width="wrap_content"
-            android:layout_height="316dp"
+            android:layout_height="300dp"
             android:id="@+id/gridLayout"
             android:columnCount="3"
             android:rowCount="6"

@@ -1,38 +1,32 @@
 package cpsc463sudoku.sudoku;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.View;
-import android.view.animation.Animation;
-import android.widget.Button;
-import android.widget.TextView;
+
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-public class MainActivity extends Activity {
 
+public class MainActivity extends FragmentActivity {
 
-    private FragmentManager fm;
     private FragmentTransaction ft;
+    public Fragment frag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fm = getFragmentManager();
-        ft = fm.beginTransaction();
-        HomePage fr = new HomePage(); //create game fragment
-        ft.replace(android.R.id.content, fr);
+        ft = getSupportFragmentManager().beginTransaction();
+        HomePage homeFrag = new HomePage(); //create game fragment
+        ft.add(R.id.activity_main, homeFrag, "Home");
+        ft.show(homeFrag);
         ft.commit();
-
 
         File sdcard = Environment.getExternalStorageDirectory();
         try
