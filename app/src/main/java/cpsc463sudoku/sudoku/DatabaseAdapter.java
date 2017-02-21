@@ -26,15 +26,15 @@ public class DatabaseAdapter
 		open();
 	}
 
-	public void addBoard(Board newBoard)
+	public void addBoard(BoardAdapter newBoardAdapter)
 	{
 		ContentValues values = new ContentValues();
 
-		values.put(SQLHelper.COLUMN_BOARDID, newBoard.getBoardID());
-		values.put(SQLHelper.COLUMN_BOARD_INITIAL_STATE, newBoard.getBoardInitialState());
+		values.put(SQLHelper.COLUMN_BOARDID, newBoardAdapter.getBoardID());
+		values.put(SQLHelper.COLUMN_BOARD_INITIAL_STATE, newBoardAdapter.getBoardInitialState());
 
 		database.insertWithOnConflict(dbHelper.GetBoardsTable(), null, values, SQLiteDatabase.CONFLICT_REPLACE);
-		Log.i(TAG, "Inserted Board : " + newBoard.getBoardID() + " Into Database.");
+		Log.i(TAG, "Inserted BoardAdapter : " + newBoardAdapter.getBoardID() + " Into Database.");
 	}
 
 	public void addUser(User newUser)
@@ -54,11 +54,11 @@ public class DatabaseAdapter
 		dbHelper.close();
 	}
 
-	public Board deleteBoard(Board board)
+	public BoardAdapter deleteBoard(BoardAdapter boardAdapter)
 	{
-		long id = board.getBoardID();
+		long id = boardAdapter.getBoardID();
 		database.delete(SQLHelper.TABLE_BOARDS, SQLHelper.COLUMN_BOARDID + "=" + id, null);
-		return board;
+		return boardAdapter;
 	}
 
 	public Cursor getBoard(long boardID)

@@ -27,26 +27,6 @@ public class MainActivity extends FragmentActivity {
         ft.add(R.id.activity_main, homeFrag, "Home");
         ft.show(homeFrag);
         ft.commit();
-
-        File sdcard = Environment.getExternalStorageDirectory();
-        try
-        {
-            File file = new File(sdcard, "/Download/puzzleList.txt");
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null)
-            {
-                Board newBoard = new Board(line);
-                Log.d("Created a new Board: ", newBoard.toString());
-            }
-            br.close();
-        }
-        catch(Exception e)
-        {
-            Log.d("Caught Exception: ", e.getMessage());
-            e.printStackTrace();
-        }
-
     }
 
 }

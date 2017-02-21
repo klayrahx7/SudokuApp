@@ -4,7 +4,10 @@ package cpsc463sudoku.sudoku;
  * Created by MarkBallin on 2/13/2017.
  */
 
-public class Cell {
+public class BoardCell
+{
+    public static final int EMPTY_CELL = 0;
+    private long id;
     private int currentValue;
     private boolean isHighlighted;
     private boolean isSelected;
@@ -12,17 +15,17 @@ public class Cell {
     private boolean isHint;
     private boolean isSolved;
     private boolean isCorrect;
-    private int[] possibleValues;
+    private int[] userNotes;
 
-    public Cell()
+    public BoardCell()
     {
-        this.currentValue = 0;
+        this.currentValue = EMPTY_CELL;
         this.isHighlighted = false;
         this.isSelected = false;
-        this.possibleValues = new int[9];
+        this.userNotes = new int[9];
     }
 
-    public Cell(String newCurrentValue)
+    public BoardCell(String newCurrentValue)
     {
         if( isInteger(newCurrentValue) )
         {
@@ -30,27 +33,27 @@ public class Cell {
         }
         else
         {
-            this.currentValue = 0;
+            this.currentValue = EMPTY_CELL;
         }
         this.isHighlighted = false;
         this.isSelected = false;
-        this.possibleValues = new int[] {0,0,0,0,0,0,0,0,0};
+        this.userNotes = new int[] {EMPTY_CELL,EMPTY_CELL,EMPTY_CELL,EMPTY_CELL,EMPTY_CELL,EMPTY_CELL,EMPTY_CELL,EMPTY_CELL,EMPTY_CELL};
     }
 
-    public Cell(Cell newCell)
+    public BoardCell(BoardCell newBoardCell)
     {
-        this.currentValue = newCell.getCurrentValue();
-        this.isHighlighted = newCell.isHighlighted();
-        this.isSelected = newCell.isSelected();
-        this.possibleValues = newCell.getPossibleValues();
+        this.currentValue = newBoardCell.getCurrentValue();
+        this.isHighlighted = newBoardCell.isHighlighted();
+        this.isSelected = newBoardCell.isSelected();
+        this.userNotes = newBoardCell.getUserNotes();
     }
 
-    public Cell(int newCurrentValue, boolean isHighlighted, boolean isSelected, int[] possibleValues)
+    public BoardCell(int newCurrentValue, boolean isHighlighted, boolean isSelected, int[] userNotes)
     {
         this.currentValue = newCurrentValue;
         this.isHighlighted = isHighlighted;
         this.isSelected = isSelected();
-        this.possibleValues = possibleValues;
+        this.userNotes = userNotes;
     }
 
     private boolean isInteger(String s)
@@ -85,6 +88,14 @@ public class Cell {
         return true;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public int getCurrentValue() {
         return currentValue;
     }
@@ -109,12 +120,12 @@ public class Cell {
         isSelected = selected;
     }
 
-    public int[] getPossibleValues() {
-        return possibleValues;
+    public int[] getUserNotes() {
+        return userNotes;
     }
 
-    public void setPossibleValues(int[] possibleValues) {
-        this.possibleValues = possibleValues;
+    public void setUserNotes(int[] userNotes) {
+        this.userNotes = userNotes;
     }
 
     public boolean isInitialValue() {
