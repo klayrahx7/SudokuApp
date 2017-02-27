@@ -2,6 +2,7 @@ package cpsc463sudoku.sudoku;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,33 +77,58 @@ public class ControlPanelAdapter extends BaseAdapter{
      */
     public ControlPanelAdapter(Context context)
     {
-        this.context = context;
         controlPanelButtons = new ArrayList<ControlPanelCell>();
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_1_button));
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_2_button));
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_3_button));
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_4_button));
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_5_button));
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_6_button));
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_7_button));
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_8_button));
-        controlPanelButtons.add(new ControlPanelCell(R.drawable.ic_numeric_9_button));
+        this.context = context;
+
+        ControlPanelCell numberOne = new ControlPanelCell(context, R.drawable.ic_numeric_1_button);
+        ControlPanelCell numberTwo = new ControlPanelCell(context, R.drawable.ic_numeric_2_button);
+        ControlPanelCell numberThree = new ControlPanelCell(context, R.drawable.ic_numeric_3_button);
+        ControlPanelCell numberFour = new ControlPanelCell(context, R.drawable.ic_numeric_4_button);
+        ControlPanelCell numberFive = new ControlPanelCell(context, R.drawable.ic_numeric_5_button);
+        ControlPanelCell numberSix = new ControlPanelCell(context, R.drawable.ic_numeric_6_button);
+        ControlPanelCell numberSeven = new ControlPanelCell(context, R.drawable.ic_numeric_7_button);
+        ControlPanelCell numberEight = new ControlPanelCell(context, R.drawable.ic_numeric_8_button);
+        ControlPanelCell numberNine = new ControlPanelCell(context, R.drawable.ic_numeric_9_button);
+
+        controlPanelButtons.add(numberOne);
+        controlPanelButtons.add(numberTwo);
+        controlPanelButtons.add(numberThree);
+        controlPanelButtons.add(numberFour);
+        controlPanelButtons.add(numberFive);
+        controlPanelButtons.add(numberSix);
+        controlPanelButtons.add(numberSeven);
+        controlPanelButtons.add(numberEight);
+        controlPanelButtons.add(numberNine);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
         View cell;
-        ImageButton newButton = new ImageButton(context);
 
         if(convertView == null)
         {
             LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
             cell = layoutInflater.inflate(R.layout.control_panel_cell, null);
-            newButton.setLayoutParams(new GridView.LayoutParams(200, 200));
-            newButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            final int pos = position;
+            ImageButton newButton = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
+            //newButton.setLayoutParams(new GridView.LayoutParams(200, 200));
+            //newButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
             newButton.setPadding(8, 8, 8, 8);
             newButton.setImageResource(controlPanelButtons.get(position).getImageResource());
+            newButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("TAG", "ControlPanel short click: " + pos);
+                }
+            });
+            newButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Log.d("TAG", "ControlPanel long click: " + pos);
+                    return false;
+                }
+            });
         }
         else
         {

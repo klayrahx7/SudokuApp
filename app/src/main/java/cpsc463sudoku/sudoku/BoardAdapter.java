@@ -2,6 +2,7 @@ package cpsc463sudoku.sudoku;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +104,21 @@ public class BoardAdapter extends BaseAdapter{
             LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
             cell = layoutInflater.inflate(R.layout.board_cell, null);
             Button name = (Button) cell.findViewById(R.id.grid_item);
+            final int pos = position;
             name.setText(String.valueOf(getCurrentCellMap().get(position).getCurrentValue()));
+            name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("TAG", "Board short click: " + pos);
+                }
+            });
+            name.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Log.d("TAG", "Board long click: " + pos);
+                    return false;
+                }
+            });
         }
         else
         {
@@ -142,9 +157,9 @@ public class BoardAdapter extends BaseAdapter{
      *  When a new button is pressed, that value is saved into the current board_cell.
      *  The newly pressed button is highlighted
     */
-    private void setCurrentCellMainNumber(int newValue, int xPos, int yPos)
+    private void setCurrentCellMainNumber(int newValue, int position)
     {
-        this.boardCurrentStateBoardCellMap.get(xPos * yPos).setCurrentValue(newValue);
+        this.boardCurrentStateBoardCellMap.get(position).setCurrentValue(newValue);
     }
 
     /*
