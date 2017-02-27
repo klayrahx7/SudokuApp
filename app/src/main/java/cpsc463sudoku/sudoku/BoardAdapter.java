@@ -2,6 +2,8 @@ package cpsc463sudoku.sudoku;
 
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +12,13 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Mark Ballin on 2/12/2017.
  */
-
 
 public class BoardAdapter extends BaseAdapter{
 
@@ -95,27 +99,56 @@ public class BoardAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(final int position, View convertView, ViewGroup parent)
     {
         View cell;
+        Resources res = this.context.getResources();
+        DisplayMetrics displayMetrics = this.context.getResources().getDisplayMetrics();
+        int screen_width = displayMetrics.widthPixels;    //width of the device screen
+        int screen_height = displayMetrics.heightPixels;   //height of device screen
 
         if(convertView == null)
         {
             LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
             cell = layoutInflater.inflate(R.layout.board_cell, null);
             Button name = (Button) cell.findViewById(R.id.grid_item);
-            final int pos = position;
-            name.setText(String.valueOf(getCurrentCellMap().get(position).getCurrentValue()));
+            ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) name.getLayoutParams();
+            params.width = screen_width / 9;
+            params.height = (int)(screen_height * 0.65) / 9;
+            name.setLayoutParams(params);
+            name.setTextSize(30);
+            name.setPadding(0,0,0,5);
+
+            final BoardCell currentCell = getCurrentCellMap().get(position);
+            currentCell.setId((long)position);
+            if(currentCell.isSelected())
+            {
+                name.setBackgroundColor(res.getColor(R.color.Selected));
+            }
+            if(currentCell.isHighlighted())
+            {
+                name.setBackgroundColor(res.getColor(R.color.Highlighted));
+            }
+            if(currentCell.getCurrentValue() == 0)
+            {
+                name.setText(" ");
+            }
+            else
+            {
+                name.setText(String.valueOf(currentCell.getCurrentValue()));
+            }
             name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("TAG", "Board short click: " + pos);
+                    Log.d("TAG", "Board short click: " + position);
+                    highlightRowAndColumn(position);
+                    currentCell.setSelected(true);
                 }
             });
             name.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Log.d("TAG", "Board long click: " + pos);
+                    Log.d("TAG", "Board long click: " + position);
                     return false;
                 }
             });
@@ -126,6 +159,11 @@ public class BoardAdapter extends BaseAdapter{
         }
 
         return cell;
+    }
+
+    public void notifyAdapterDataSetChanged() {
+        //... your custom logic
+        notifyDataSetChanged();
     }
 
     /*
@@ -149,6 +187,91 @@ public class BoardAdapter extends BaseAdapter{
         return newList;
     }
 
+    /*
+     * When the user short clicks a square in the board it should highlight the board and its corresponding row and column
+     */
+    private void highlightRowAndColumn(int position)
+    {
+        int[] columnsToHighlight = getColumn(position);
+        int[] rowsToHighlight = getRow(position);
+
+        // Reset all highlighting
+        for(int i = 0 ; i < getBoardCurrentState().length(); i++)
+        {
+            this.boardCurrentStateBoardCellMap.get(i).setHighlighted(false);
+        }
+
+        // Highlight currently selected row
+        for(int i = 0 ; i < columnsToHighlight.length; i++)
+        {
+            this.boardCurrentStateBoardCellMap.get(columnsToHighlight[i]).setHighlighted(true);
+        }
+
+        // Highlight currently selected rcolumn
+        for(int i = 0 ; i < rowsToHighlight.length; i++)
+        {
+            this.boardCurrentStateBoardCellMap.get(rowsToHighlight[i]).setHighlighted(true);
+        }
+    }
+
+    private int[] getRow(int position)
+    {
+        int[] solution = new int[9];
+        int count = 0;
+        int i = position;
+        if(position % 9 != 0)
+        {
+            do
+            {
+                i--;
+                solution[count] = i;
+                count++;
+            }while(i % 9 != 0);
+            i = position;
+        }
+        else
+        {
+            solution[count] = position;
+            count++;
+            i = position+1;
+        }
+
+        do
+        {
+            solution[count] = i;
+            count++;
+            i++;
+        }while(i % 9 != 0);
+        Log.d("GetRow ",String.valueOf(position));
+        for(i = 0; i < solution.length; i++)
+        {
+            Log.d(String.valueOf(i), String.valueOf(solution[i]));
+        }
+        return solution;
+    }
+
+    private int[] getColumn(int position)
+    {
+        Set<Integer> solution = new HashSet<Integer>() {};
+        for(int i = position; i >= 0; i-=9)
+        {
+            solution.add(i);
+        }
+        for(int i = position; i <= 80; i+=9)
+        {
+            solution.add(i);
+        }
+
+        int[] outputSol = new int[solution.size()];
+        Integer[] temp = solution.toArray(new Integer[solution.size()]);
+        Log.d("GetColumn ",String.valueOf(position));
+        for(int i = 0 ; i < outputSol.length; i++)
+        {
+            outputSol[i] = temp[i];
+            Log.d(String.valueOf(i), String.valueOf(outputSol[i]));
+        }
+        return outputSol;
+    }
     /*
      * When the user short presses a single board_cell:
      *  The current board_cell is marked as selected.

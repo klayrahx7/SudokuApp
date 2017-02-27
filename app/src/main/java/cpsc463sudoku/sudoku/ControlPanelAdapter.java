@@ -40,39 +40,6 @@ public class ControlPanelAdapter extends BaseAdapter{
     private ArrayList<ControlPanelCell> controlPanelButtons;
 
     /*
-            ImageButton undo = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton redo = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton erase = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton addNotes = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton getHint = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton checkSolution = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton one = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton two = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton three = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton four = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton five = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton six = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton seven = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton eight = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            ImageButton nine = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            undo.setText(R.string.undo);
-            redo.setText(R.string.redo);
-            erase.setText(R.string.erase);
-            addNotes.setText(R.string.addNotes);
-            getHint.setText(R.string.getHint);
-            checkSolution.setText(R.string.checkSolution);
-            one.setTextSize(R.string.one);
-            two.setTextSize(R.string.two);
-            three.setTextSize(R.string.three);
-            four.setTextSize(R.string.four);
-            five.setTextSize(R.string.five);
-            six.setTextSize(R.string.six);
-            seven.setTextSize(R.string.seven);
-            eight.setTextSize(R.string.eight);
-            nine.setTextSize(R.string.nine);
-    */
-
-    /*
      * Default Constructor
      */
     public ControlPanelAdapter(Context context)
@@ -80,25 +47,42 @@ public class ControlPanelAdapter extends BaseAdapter{
         controlPanelButtons = new ArrayList<ControlPanelCell>();
         this.context = context;
 
-        ControlPanelCell numberOne = new ControlPanelCell(context, R.drawable.ic_numeric_1_button);
-        ControlPanelCell numberTwo = new ControlPanelCell(context, R.drawable.ic_numeric_2_button);
-        ControlPanelCell numberThree = new ControlPanelCell(context, R.drawable.ic_numeric_3_button);
-        ControlPanelCell numberFour = new ControlPanelCell(context, R.drawable.ic_numeric_4_button);
-        ControlPanelCell numberFive = new ControlPanelCell(context, R.drawable.ic_numeric_5_button);
-        ControlPanelCell numberSix = new ControlPanelCell(context, R.drawable.ic_numeric_6_button);
-        ControlPanelCell numberSeven = new ControlPanelCell(context, R.drawable.ic_numeric_7_button);
-        ControlPanelCell numberEight = new ControlPanelCell(context, R.drawable.ic_numeric_8_button);
-        ControlPanelCell numberNine = new ControlPanelCell(context, R.drawable.ic_numeric_9_button);
+        ControlPanelCell numberOne = new ControlPanelCell(context, R.drawable.control_panel_blue_1);
+        ControlPanelCell numberTwo = new ControlPanelCell(context, R.drawable.control_panel_blue_2);
+        ControlPanelCell numberThree = new ControlPanelCell(context, R.drawable.control_panel_blue_3);
+        ControlPanelCell numberFour = new ControlPanelCell(context, R.drawable.control_panel_blue_4);
+        ControlPanelCell numberFive = new ControlPanelCell(context, R.drawable.control_panel_blue_5);
+        ControlPanelCell numberSix = new ControlPanelCell(context, R.drawable.control_panel_blue_6);
+        ControlPanelCell numberSeven = new ControlPanelCell(context, R.drawable.control_panel_blue_7);
+        ControlPanelCell numberEight = new ControlPanelCell(context, R.drawable.control_panel_blue_8);
+        ControlPanelCell numberNine = new ControlPanelCell(context, R.drawable.control_panel_blue_9);
+        ControlPanelCell erase = new ControlPanelCell(context, R.drawable.control_panel_blue_erase);
+        ControlPanelCell undo = new ControlPanelCell(context, R.drawable.control_panel_blue_undo);
+        ControlPanelCell redo = new ControlPanelCell(context, R.drawable.control_panel_blue_redo);
+        ControlPanelCell addNotes = new ControlPanelCell(context, R.drawable.control_panel_blue_set_notes);
+        ControlPanelCell getHint = new ControlPanelCell(context, R.drawable.control_panel_blue_get_hint);
+        ControlPanelCell solve = new ControlPanelCell(context, R.drawable.control_panel_blue_solve);
 
+        // Row One
+        controlPanelButtons.add(undo);
         controlPanelButtons.add(numberOne);
         controlPanelButtons.add(numberTwo);
         controlPanelButtons.add(numberThree);
+        controlPanelButtons.add(addNotes);
+
+        // Row two
+        controlPanelButtons.add(redo);
         controlPanelButtons.add(numberFour);
         controlPanelButtons.add(numberFive);
         controlPanelButtons.add(numberSix);
+        controlPanelButtons.add(getHint);
+
+        // Row three
+        controlPanelButtons.add(erase);
         controlPanelButtons.add(numberSeven);
         controlPanelButtons.add(numberEight);
         controlPanelButtons.add(numberNine);
+        controlPanelButtons.add(solve);
     }
 
     @Override
@@ -112,10 +96,14 @@ public class ControlPanelAdapter extends BaseAdapter{
             cell = layoutInflater.inflate(R.layout.control_panel_cell, null);
             final int pos = position;
             ImageButton newButton = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            //newButton.setLayoutParams(new GridView.LayoutParams(200, 200));
-            //newButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            newButton.setPadding(8, 8, 8, 8);
+            newButton.setPadding(1, 1, 1, 1);
             newButton.setImageResource(controlPanelButtons.get(position).getImageResource());
+            switch (position)
+            {
+                case 0:
+                    //cell.set
+                    break;
+            }
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
