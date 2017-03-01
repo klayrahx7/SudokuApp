@@ -9,14 +9,17 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.15"
+        android:layout_weight="0.35"
         android:id="@+id/boardContainer">
 
         <GridView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:numColumns="9"
-            android:gravity="clip_horizontal"
+            android:verticalSpacing="-5dp"
+            android:horizontalSpacing="-5dp"
+            android:stretchMode="columnWidth"
+            android:adjustViewBounds="true"
             android:id="@+id/boardView" >
         </GridView>
 
@@ -25,7 +28,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.4"
+        android:layout_weight="0.65"
         android:id="@+id/ControlPanelContainer">
 
         <GridView

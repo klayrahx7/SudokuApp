@@ -3,6 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
     <color name="black_overlay">#66000000</color>
+    <color name="Color_1">#8ad5f0</color>
+    <color name="Color_2">#61380b</color>
+    <color name="Selected">#b40404</color>
+    <color name="Highlighted">#f2f5a9</color>
+    <color name="Black">#000000</color>
+    <color name="White">#FFFFFF</color>
 </resources>

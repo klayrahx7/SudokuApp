@@ -98,12 +98,6 @@ public class ControlPanelAdapter extends BaseAdapter{
             ImageButton newButton = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
             newButton.setPadding(1, 1, 1, 1);
             newButton.setImageResource(controlPanelButtons.get(position).getImageResource());
-            switch (position)
-            {
-                case 0:
-                    //cell.set
-                    break;
-            }
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

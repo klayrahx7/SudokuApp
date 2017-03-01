@@ -16,6 +16,7 @@ import android.widget.GridView;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 /**
  * Created by Nguyen on 2/17/2017.
@@ -43,7 +44,10 @@ public class PlayGame extends Fragment {
         });
 
         GridView board = (GridView)v.findViewById(R.id.boardView);
-        BoardAdapter boardAdapter = new BoardAdapter(getActivity(), getBoardData().toString());
+        Bundle gameState = this.getArguments();
+        BoardAdapter boardAdapter = gameState.getParcelable("gameState");
+        boardAdapter.setContext(getActivity());
+        boardAdapter.setCalliingContainer(this);
         board.setAdapter(boardAdapter);
 
         GridView controlPanel = (GridView)v.findViewById(R.id.controlPanelView);
@@ -51,34 +55,5 @@ public class PlayGame extends Fragment {
         controlPanel.setAdapter(controlPanelAdapter);
 
         return v;
-    }
-
-    public BoardAdapter getBoardData()
-    {
-        File sdcard = Environment.getExternalStorageDirectory();
-        try
-        {
-            File puzzleList = new File(sdcard, "/Download/puzzleList.txt");
-            File solutionList = new File(sdcard, "/Download/solutionList.txt");
-            BufferedReader brpl = new BufferedReader(new FileReader(puzzleList));
-            BufferedReader brsl = new BufferedReader(new FileReader(solutionList));
-            String linepl;
-            String linesl;
-            if ((linepl = brpl.readLine()) != null && (linesl = brsl.readLine()) != null) {
-                BoardAdapter newBoardAdapter = new BoardAdapter(getActivity(), linepl);
-                newBoardAdapter.setBoardSolvedState(linesl);
-                Log.d("Created a new Board: ", newBoardAdapter.toString());
-                Log.d("Its Solution is    : ", newBoardAdapter.getBoardSolvedState());
-                brpl.close();
-                brsl.close();
-                return newBoardAdapter;
-            }
-        }
-        catch(Exception e)
-        {
-            Log.d("Caught Exception: ", e.getMessage());
-            e.printStackTrace();
-        }
-        return new BoardAdapter(getActivity());
     }
 }

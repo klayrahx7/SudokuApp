@@ -1,8 +1,12 @@
 package cpsc463sudoku.sudoku;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +16,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,10 +23,10 @@ import java.util.Set;
  * Created by Mark Ballin on 2/12/2017.
  */
 
-public class BoardAdapter extends BaseAdapter{
+public class BoardAdapter extends BaseAdapter implements Parcelable {
 
     private Context context;
-    private ArrayList<BoardCell> boardCurrentStateBoardCellMap;
+    private ArrayList<BoardCell> boardCellMap;
     private long boardID;
     private final int BOARD_MOVE_HISTORY_LIMIT = 1000;
     private String boardInitialState;
@@ -33,23 +36,8 @@ public class BoardAdapter extends BaseAdapter{
     private boolean isSolved;
     private boolean isSFull;
     private boolean isComplete;
+    public Fragment calliingContainer;
 
-    /*
-     * Default Constructor
-     */
-    public BoardAdapter(Context context)
-    {
-        //super(context, android.R.id.content, objects);
-        this.context = context;
-        this.boardID = -1;
-        this.boardInitialState = "";
-        this.boardCurrentState = "";
-        this.isSolved = false;
-        this.isSFull = false;
-        this.isComplete = false;
-        this.boardStateList = new String[BOARD_MOVE_HISTORY_LIMIT];
-        this.boardCurrentStateBoardCellMap = new ArrayList<BoardCell>();
-    }
 
     /*
      * Constructor from state string
@@ -64,38 +52,77 @@ public class BoardAdapter extends BaseAdapter{
         this.isSFull = false;
         this.isComplete = false;
         this.boardStateList = new String[BOARD_MOVE_HISTORY_LIMIT];
-        this.boardCurrentStateBoardCellMap = this.setCurrentCellMap(newBoardState);
+        this.boardCellMap = this.setCurrentCellMap(newBoardState);
     }
 
     /*
      * Copy Constructor
      */
-    public BoardAdapter(Context context, BoardAdapter newBoardAdapter)
+    public BoardAdapter(Context context, BoardAdapter newBoard, Fragment callingContainer)
     {
         this.context = context;
-        this.boardID = newBoardAdapter.getBoardID();
-        this.boardInitialState = newBoardAdapter.getBoardInitialState();
-        this.boardCurrentState = newBoardAdapter.getBoardCurrentState();
-        this.boardStateList = newBoardAdapter.getBoardStateList();
-        this.boardCurrentStateBoardCellMap = newBoardAdapter.getCurrentCellMap();
-        this.isSolved = newBoardAdapter.isSolved();
-        this.isSFull = newBoardAdapter.isFull();
-        this.isComplete = newBoardAdapter.isComplete();
+        this.boardID = -1;
+        this.boardInitialState = newBoard.toString();
+        this.boardCurrentState = newBoard.toString();
+        this.boardStateList = new String[BOARD_MOVE_HISTORY_LIMIT];
+        this.boardCellMap = newBoard.getCurrentCellMap();
+        this.isSolved = false;
+        this.isSFull = false;
+        this.isComplete = false;
+        this.calliingContainer = callingContainer;
+    }
+
+    public BoardAdapter(Parcel in)
+    {
+        this.boardID = in.readLong();
+        this.boardInitialState = in.readString();
+        this.boardCurrentState = in.readString();
+        this.boardSolvedState = in.readString();
+        in.readStringArray(this.boardStateList);
+        this.boardCellMap = this.setCurrentCellMap(boardCurrentState);
+        in.readBooleanArray(new boolean[]{this.isSolved, this.isSFull, this.isComplete});
+    }
+
+    public static final Parcelable.Creator<BoardAdapter> CREATOR = new Parcelable.Creator<BoardAdapter>()
+    {
+        public BoardAdapter createFromParcel(Parcel in) {
+            return new BoardAdapter(in);
+        }
+
+        public BoardAdapter[] newArray(int size) {
+            return new BoardAdapter[size];
+        }
+    };
+
+    @Override
+    public int describeContents()
+    {
+        return 1;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(this.boardID);
+        out.writeString(this.boardInitialState);
+        out.writeString(this.boardCurrentState);
+        out.writeString(this.boardSolvedState);
+        out.writeStringArray(this.boardStateList);
+        out.writeBooleanArray(new boolean[]{this.isSolved, this.isSFull, this.isComplete});
     }
 
     @Override
     public int getCount() {
-        return this.boardCurrentStateBoardCellMap.size();
+        return this.boardCellMap.size();
     }
 
     @Override
     public BoardCell getItem(int position) {
-        return this.boardCurrentStateBoardCellMap.get(position);
+        return this.boardCellMap.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return this.boardCurrentStateBoardCellMap.get(position).getId();
+        return this.boardCellMap.get(position).getId();
     }
 
     @Override
@@ -121,13 +148,15 @@ public class BoardAdapter extends BaseAdapter{
 
             final BoardCell currentCell = getCurrentCellMap().get(position);
             currentCell.setId((long)position);
-            if(currentCell.isSelected())
-            {
-                name.setBackgroundColor(res.getColor(R.color.Selected));
-            }
+
             if(currentCell.isHighlighted())
             {
                 name.setBackgroundColor(res.getColor(R.color.Highlighted));
+                name.setTextColor(res.getColor(R.color.Black));
+            }
+            if(currentCell.isSelected())
+            {
+                name.setBackgroundColor(res.getColor(R.color.Selected));
             }
             if(currentCell.getCurrentValue() == 0)
             {
@@ -141,8 +170,9 @@ public class BoardAdapter extends BaseAdapter{
                 @Override
                 public void onClick(View v) {
                     Log.d("TAG", "Board short click: " + position);
-                    highlightRowAndColumn(position);
+                    setAllBoardHighlights(position, true);
                     currentCell.setSelected(true);
+                    notifyAdapterDataSetChanged();
                 }
             });
             name.setOnLongClickListener(new View.OnLongClickListener() {
@@ -163,7 +193,8 @@ public class BoardAdapter extends BaseAdapter{
 
     public void notifyAdapterDataSetChanged() {
         //... your custom logic
-        notifyDataSetChanged();
+        FragmentTransaction ft = calliingContainer.getFragmentManager().beginTransaction();
+        ft.detach(calliingContainer).attach(calliingContainer).commit();
     }
 
     /*
@@ -187,30 +218,63 @@ public class BoardAdapter extends BaseAdapter{
         return newList;
     }
 
+    private void setAllBoardHighlights(int position, boolean flag)
+    {
+        removeAllCellEffects(false);
+        setIsHighlightedRowAndColumn(position, true);
+        setIsHighlightedSimiliarTiles(position, true);
+    }
+
+
+    /*
+      Set all highlighting
+     */
+    private void removeAllCellEffects(boolean flag)
+    {
+        for(int i = 0 ; i < getBoardCurrentState().length(); i++)
+        {
+            this.boardCellMap.get(i).setHighlighted(flag);
+            this.boardCellMap.get(i).setSelected(flag);
+        }
+    }
+
     /*
      * When the user short clicks a square in the board it should highlight the board and its corresponding row and column
      */
-    private void highlightRowAndColumn(int position)
+    private void setIsHighlightedSimiliarTiles(int position, boolean flag)
+    {
+        for(int i = 0 ; i < getBoardCurrentState().length(); i++)
+        {
+            if(this.boardCellMap.get(i).getCurrentValue() == this.boardCellMap.get(position).getCurrentValue())
+            {
+                if(this.boardCellMap.get(i).getCurrentValue() != BoardCell.EMPTY_CELL)
+                {
+                    this.boardCellMap.get(i).setHighlighted(flag);
+                }
+
+            }
+
+        }
+    }
+
+    /*
+     * When the user short clicks a square in the board it should highlight the board and its corresponding row and column
+     */
+    private void setIsHighlightedRowAndColumn(int position, boolean flag)
     {
         int[] columnsToHighlight = getColumn(position);
         int[] rowsToHighlight = getRow(position);
 
-        // Reset all highlighting
-        for(int i = 0 ; i < getBoardCurrentState().length(); i++)
-        {
-            this.boardCurrentStateBoardCellMap.get(i).setHighlighted(false);
-        }
-
         // Highlight currently selected row
         for(int i = 0 ; i < columnsToHighlight.length; i++)
         {
-            this.boardCurrentStateBoardCellMap.get(columnsToHighlight[i]).setHighlighted(true);
+            this.boardCellMap.get(columnsToHighlight[i]).setHighlighted(flag);
         }
 
         // Highlight currently selected rcolumn
         for(int i = 0 ; i < rowsToHighlight.length; i++)
         {
-            this.boardCurrentStateBoardCellMap.get(rowsToHighlight[i]).setHighlighted(true);
+            this.boardCellMap.get(rowsToHighlight[i]).setHighlighted(flag);
         }
     }
 
@@ -282,7 +346,7 @@ public class BoardAdapter extends BaseAdapter{
     */
     private void setCurrentCellMainNumber(int newValue, int position)
     {
-        this.boardCurrentStateBoardCellMap.get(position).setCurrentValue(newValue);
+        this.boardCellMap.get(position).setCurrentValue(newValue);
     }
 
     /*
@@ -301,7 +365,7 @@ public class BoardAdapter extends BaseAdapter{
      */
     private boolean isFull()
     {
-        for( BoardCell c : this.boardCurrentStateBoardCellMap)
+        for( BoardCell c : this.boardCellMap)
         {
             if(c.getCurrentValue() == c.EMPTY_CELL)
             {
@@ -318,7 +382,7 @@ public class BoardAdapter extends BaseAdapter{
     {
         if(this.isFull() && this.isSolved())
         {
-            if(this.boardCurrentStateBoardCellMap.toString().equals(this.boardSolvedState))
+            if(this.boardCellMap.toString().equals(this.boardSolvedState))
             {
                 return true;
             }
@@ -335,10 +399,11 @@ public class BoardAdapter extends BaseAdapter{
         if(this.isSolved)
         {
             int hintPosition = (xPos+1) * (yPos+1);
-            this.boardCurrentStateBoardCellMap.get(hintPosition).setCurrentValue(Integer.valueOf(this.boardSolvedState.substring(hintPosition,hintPosition+1)));
-            this.boardCurrentStateBoardCellMap.get(hintPosition).setHint(true);
+            this.boardCellMap.get(hintPosition).setCurrentValue(Integer.valueOf(this.boardSolvedState.substring(hintPosition,hintPosition+1)));
+            this.boardCellMap.get(hintPosition).setHint(true);
         }
     }
+
 
     /*
      * Will output the boards current state as a string, example:
@@ -348,7 +413,7 @@ public class BoardAdapter extends BaseAdapter{
     public String toString()
     {
         String output = "";
-        for(BoardCell c : this.boardCurrentStateBoardCellMap)
+        for(BoardCell c : this.boardCellMap)
         {
             if(c.getCurrentValue() != BoardCell.EMPTY_CELL)
             {
@@ -397,7 +462,7 @@ public class BoardAdapter extends BaseAdapter{
 
     public ArrayList<BoardCell> getCurrentCellMap()
     {
-        return this.boardCurrentStateBoardCellMap;
+        return this.boardCellMap;
     }
 
     public String getBoardSolvedState() {
@@ -430,6 +495,21 @@ public class BoardAdapter extends BaseAdapter{
 
     public void setSFull(boolean SFull) {
         isSFull = SFull;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+    public Fragment getCalliingContainer() {
+        return calliingContainer;
+    }
+
+    public void setCalliingContainer(Fragment calliingContainer) {
+        this.calliingContainer = calliingContainer;
     }
 
 }

@@ -1,10 +1,17 @@
 package cpsc463sudoku.sudoku;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.v4.app.Fragment;
+
+import java.util.ArrayList;
+
 /**
  * Created by MarkBallin on 2/13/2017.
  */
 
-public class BoardCell
+public class BoardCell implements Parcelable
 {
     public static final int EMPTY_CELL = 0;
     private long id;
@@ -19,10 +26,46 @@ public class BoardCell
 
     public BoardCell()
     {
+        this.id = -1;
         this.currentValue = EMPTY_CELL;
         this.isHighlighted = false;
         this.isSelected = false;
         this.userNotes = new int[9];
+    }
+
+    public static final Parcelable.Creator<BoardCell> CREATOR = new Parcelable.Creator<BoardCell>()
+    {
+        public BoardCell createFromParcel(Parcel in) {
+            return new BoardCell(in);
+        }
+
+        public BoardCell[] newArray(int size) {
+            return new BoardCell[size];
+        }
+    };
+
+    private BoardCell(Parcel in)
+    {
+        this.id = in.readLong();
+        this.currentValue = in.readInt();
+        boolean[] bools = {this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect};
+        in.readBooleanArray(bools);
+        this.userNotes = new int[9];
+        in.readIntArray(this.userNotes);
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(this.id);
+        out.writeInt(this.currentValue);
+        out.writeBooleanArray(new boolean[]{this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect});
+        out.writeIntArray(this.userNotes);
+    }
+
+    @Override
+    public int describeContents()
+    {
+        return 1;
     }
 
     public BoardCell(String newCurrentValue)

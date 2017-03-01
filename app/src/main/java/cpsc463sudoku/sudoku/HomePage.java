@@ -5,10 +5,12 @@ package cpsc463sudoku.sudoku;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
 public class HomePage extends Fragment {
 
@@ -77,9 +83,13 @@ public class HomePage extends Fragment {
                     @Override
                     public void run()
                     {
+                        Fragment newGame = new PlayGame();
+                        Bundle gameState = new Bundle();
+                        gameState.putParcelable("gameState", getBoardData());
+                        newGame.setArguments(gameState);
                         //ft.hide(frag);
                         ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right,  R.anim.exit_to_left);
-                        ft.replace(R.id.activity_main, new PlayGame(), "PlayGame");
+                        ft.replace(R.id.activity_main, newGame, "PlayGame");
                         ft.addToBackStack("Home");
                         ft.commit();
                     }
@@ -92,5 +102,33 @@ public class HomePage extends Fragment {
         return v;
     }
 
+    public BoardAdapter getBoardData()
+    {
+        File sdcard = Environment.getExternalStorageDirectory();
+        try
+        {
+            File puzzleList = new File(sdcard, "/Download/puzzleList.txt");
+            File solutionList = new File(sdcard, "/Download/solutionList.txt");
+            BufferedReader brpl = new BufferedReader(new FileReader(puzzleList));
+            BufferedReader brsl = new BufferedReader(new FileReader(solutionList));
+            String linepl;
+            String linesl;
+            if ((linepl = brpl.readLine()) != null && (linesl = brsl.readLine()) != null) {
+                BoardAdapter newBoardAdapter = new BoardAdapter(getContext(), linepl);
+                newBoardAdapter.setBoardSolvedState(linesl);
+                Log.d("Created a new Board: ", newBoardAdapter.toString());
+                Log.d("Its Solution is    : ", newBoardAdapter.getBoardSolvedState());
+                brpl.close();
+                brsl.close();
+                return newBoardAdapter;
+            }
+        }
+        catch(Exception e)
+        {
+            Log.d("Caught Exception: ", e.getMessage());
+            e.printStackTrace();
+        }
+        return new BoardAdapter(getActivity(), "");
+    }
 
 }
