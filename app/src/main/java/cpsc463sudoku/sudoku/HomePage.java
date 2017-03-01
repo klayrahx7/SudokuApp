@@ -78,24 +78,15 @@ public class HomePage extends Fragment {
         startNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Thread thread = new Thread()
-                {
-                    @Override
-                    public void run()
-                    {
-                        Fragment newGame = new PlayGame();
-                        Bundle gameState = new Bundle();
-                        gameState.putParcelable("gameState", getBoardData());
-                        newGame.setArguments(gameState);
-                        //ft.hide(frag);
-                        ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right,  R.anim.exit_to_left);
-                        ft.replace(R.id.activity_main, newGame, "PlayGame");
-                        ft.addToBackStack("Home");
-                        ft.commit();
-                    }
-                };
-                thread.run();
-
+                Fragment newGame = new PlayGame();
+                Bundle gameState = new Bundle();
+                gameState.putParcelable("gameState", getBoardData());
+                newGame.setArguments(gameState);
+                //ft.hide(frag);
+                ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right,  R.anim.exit_to_left);
+                ft.replace(R.id.activity_main, newGame, "PlayGame");
+                ft.addToBackStack("Home");
+                ft.commit();
             }
         });
 
@@ -114,7 +105,7 @@ public class HomePage extends Fragment {
             String linepl;
             String linesl;
             if ((linepl = brpl.readLine()) != null && (linesl = brsl.readLine()) != null) {
-                BoardAdapter newBoardAdapter = new BoardAdapter(getContext(), linepl);
+                BoardAdapter newBoardAdapter = new BoardAdapter(getActivity(),linepl);
                 newBoardAdapter.setBoardSolvedState(linesl);
                 Log.d("Created a new Board: ", newBoardAdapter.toString());
                 Log.d("Its Solution is    : ", newBoardAdapter.getBoardSolvedState());
@@ -128,7 +119,7 @@ public class HomePage extends Fragment {
             Log.d("Caught Exception: ", e.getMessage());
             e.printStackTrace();
         }
-        return new BoardAdapter(getActivity(), "");
+        return new BoardAdapter(getActivity(),"");
     }
 
 }

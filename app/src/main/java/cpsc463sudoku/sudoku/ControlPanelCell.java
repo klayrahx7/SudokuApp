@@ -20,12 +20,12 @@ public class ControlPanelCell {
         this.cellButton = new ImageButton(null);
     }
 
-    public ControlPanelCell(Context context, int newImage)
+    public ControlPanelCell(Context context)
     {
         this.isHighlighted = false;
-        this.imageResource = newImage;
+        this.imageResource = -1;
         this.cellButton = new ImageButton(context);
-        this.cellButton.setImageResource(newImage);
+        this.cellButton.setImageResource(-1);
     }
 
     public int getImageResource() {

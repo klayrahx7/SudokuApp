@@ -45,6 +45,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     public BoardAdapter(Context context, String newBoardState)
     {
         this.context = context;
+        this.calliingContainer = null;
         this.boardID = -1;
         this.boardInitialState = newBoardState;
         this.boardCurrentState = newBoardState;
@@ -55,25 +56,10 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
         this.boardCellMap = this.setCurrentCellMap(newBoardState);
     }
 
-    /*
-     * Copy Constructor
-     */
-    public BoardAdapter(Context context, BoardAdapter newBoard, Fragment callingContainer)
-    {
-        this.context = context;
-        this.boardID = -1;
-        this.boardInitialState = newBoard.toString();
-        this.boardCurrentState = newBoard.toString();
-        this.boardStateList = new String[BOARD_MOVE_HISTORY_LIMIT];
-        this.boardCellMap = newBoard.getCurrentCellMap();
-        this.isSolved = false;
-        this.isSFull = false;
-        this.isComplete = false;
-        this.calliingContainer = callingContainer;
-    }
-
     public BoardAdapter(Parcel in)
     {
+        this.context = context;
+        this.calliingContainer = null;
         this.boardID = in.readLong();
         this.boardInitialState = in.readString();
         this.boardCurrentState = in.readString();
@@ -128,65 +114,58 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent)
     {
-        View cell;
+        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        View cell = layoutInflater.inflate(R.layout.board_cell, null);
+
         Resources res = this.context.getResources();
+        Button name = (Button) cell.findViewById(R.id.grid_item);
         DisplayMetrics displayMetrics = this.context.getResources().getDisplayMetrics();
+        ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) name.getLayoutParams();
+
         int screen_width = displayMetrics.widthPixels;    //width of the device screen
-        int screen_height = displayMetrics.heightPixels;   //height of device screen
+        int screen_height = displayMetrics.heightPixels;   //height of device screenstop reading my rants
+        params.width = screen_width / 9;
+        params.height = (int)(screen_height * 0.65) / 9;
+        name.setLayoutParams(params);
+        name.setTextSize(30);
+        name.setPadding(0,0,0,0);
 
-        if(convertView == null)
+        final BoardCell currentCell = getCurrentCellMap().get(position);
+        currentCell.setId((long)position);
+
+        if(currentCell.isHighlighted())
         {
-            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-            cell = layoutInflater.inflate(R.layout.board_cell, null);
-            Button name = (Button) cell.findViewById(R.id.grid_item);
-            ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) name.getLayoutParams();
-            params.width = screen_width / 9;
-            params.height = (int)(screen_height * 0.65) / 9;
-            name.setLayoutParams(params);
-            name.setTextSize(30);
-            name.setPadding(0,0,0,5);
-
-            final BoardCell currentCell = getCurrentCellMap().get(position);
-            currentCell.setId((long)position);
-
-            if(currentCell.isHighlighted())
-            {
-                name.setBackgroundColor(res.getColor(R.color.Highlighted));
-                name.setTextColor(res.getColor(R.color.Black));
-            }
-            if(currentCell.isSelected())
-            {
-                name.setBackgroundColor(res.getColor(R.color.Selected));
-            }
-            if(currentCell.getCurrentValue() == 0)
-            {
-                name.setText(" ");
-            }
-            else
-            {
-                name.setText(String.valueOf(currentCell.getCurrentValue()));
-            }
-            name.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("TAG", "Board short click: " + position);
-                    setAllBoardHighlights(position, true);
-                    currentCell.setSelected(true);
-                    notifyAdapterDataSetChanged();
-                }
-            });
-            name.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Log.d("TAG", "Board long click: " + position);
-                    return false;
-                }
-            });
+            name.setBackgroundColor(res.getColor(R.color.Highlighted));
+            name.setTextColor(res.getColor(R.color.Black));
+        }
+        if(currentCell.isSelected())
+        {
+            name.setBackgroundColor(res.getColor(R.color.Selected));
+        }
+        if(currentCell.getCurrentValue() == 0)
+        {
+            name.setText(" ");
         }
         else
         {
-            cell = convertView;
+            name.setText(String.valueOf(currentCell.getCurrentValue()));
         }
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "Board short click: " + position);
+                setAllBoardHighlights(position, true);
+                currentCell.setSelected(true);
+                notifyDataSetChanged();
+            }
+        });
+        name.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("TAG", "Board long click: " + position);
+                return false;
+            }
+        });
 
         return cell;
     }

@@ -7,10 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -22,188 +19,166 @@ import java.util.ArrayList;
 public class ControlPanelAdapter extends BaseAdapter{
 
     private Context context;
-    private boolean undo;
-    private boolean redo;
-    private boolean erase;
-    private boolean addNotes;
-    private boolean getHint;
-    private boolean checkSolution;
-    private boolean one;
-    private boolean two;
-    private boolean three;
-    private boolean four;
-    private boolean five;
-    private boolean six;
-    private boolean seven;
-    private boolean eight;
-    private boolean nine;
-    private ArrayList<ControlPanelCell> controlPanelButtons;
-
+    private ArrayList<ControlPanelCell> controlPanelState;
+    private int[] controlPanelButtonsBlue;
+    private int[] controlPanelButtonsRed;
+    private final int NUM_OF_BUTTONS = 15;
     /*
      * Default Constructor
      */
     public ControlPanelAdapter(Context context)
     {
-        controlPanelButtons = new ArrayList<ControlPanelCell>();
+        this.controlPanelState = new ArrayList<ControlPanelCell>();
+        this.controlPanelButtonsBlue = new int[NUM_OF_BUTTONS];
+        this.controlPanelButtonsRed = new int[NUM_OF_BUTTONS];
         this.context = context;
 
-        ControlPanelCell numberOne = new ControlPanelCell(context, R.drawable.control_panel_blue_1);
-        ControlPanelCell numberTwo = new ControlPanelCell(context, R.drawable.control_panel_blue_2);
-        ControlPanelCell numberThree = new ControlPanelCell(context, R.drawable.control_panel_blue_3);
-        ControlPanelCell numberFour = new ControlPanelCell(context, R.drawable.control_panel_blue_4);
-        ControlPanelCell numberFive = new ControlPanelCell(context, R.drawable.control_panel_blue_5);
-        ControlPanelCell numberSix = new ControlPanelCell(context, R.drawable.control_panel_blue_6);
-        ControlPanelCell numberSeven = new ControlPanelCell(context, R.drawable.control_panel_blue_7);
-        ControlPanelCell numberEight = new ControlPanelCell(context, R.drawable.control_panel_blue_8);
-        ControlPanelCell numberNine = new ControlPanelCell(context, R.drawable.control_panel_blue_9);
-        ControlPanelCell erase = new ControlPanelCell(context, R.drawable.control_panel_blue_erase);
-        ControlPanelCell undo = new ControlPanelCell(context, R.drawable.control_panel_blue_undo);
-        ControlPanelCell redo = new ControlPanelCell(context, R.drawable.control_panel_blue_redo);
-        ControlPanelCell addNotes = new ControlPanelCell(context, R.drawable.control_panel_blue_set_notes);
-        ControlPanelCell getHint = new ControlPanelCell(context, R.drawable.control_panel_blue_get_hint);
-        ControlPanelCell solve = new ControlPanelCell(context, R.drawable.control_panel_blue_solve);
-
+        //Make blue buttons
         // Row One
-        controlPanelButtons.add(undo);
-        controlPanelButtons.add(numberOne);
-        controlPanelButtons.add(numberTwo);
-        controlPanelButtons.add(numberThree);
-        controlPanelButtons.add(addNotes);
+        this.controlPanelButtonsBlue[0] =  R.drawable.control_panel_blue_undo;
+        this.controlPanelButtonsBlue[1] =  R.drawable.control_panel_blue_1;
+        this.controlPanelButtonsBlue[2] =  R.drawable.control_panel_blue_2;
+        this.controlPanelButtonsBlue[3] =  R.drawable.control_panel_blue_3;
+        this.controlPanelButtonsBlue[4] =  R.drawable.control_panel_blue_set_notes;
 
         // Row two
-        controlPanelButtons.add(redo);
-        controlPanelButtons.add(numberFour);
-        controlPanelButtons.add(numberFive);
-        controlPanelButtons.add(numberSix);
-        controlPanelButtons.add(getHint);
+        this.controlPanelButtonsBlue[5] =  R.drawable.control_panel_blue_redo;
+        this.controlPanelButtonsBlue[6] =  R.drawable.control_panel_blue_4;
+        this.controlPanelButtonsBlue[7] =  R.drawable.control_panel_blue_5;
+        this.controlPanelButtonsBlue[8] =  R.drawable.control_panel_blue_6;
+        this.controlPanelButtonsBlue[9] =  R.drawable.control_panel_blue_get_hint;
 
         // Row three
-        controlPanelButtons.add(erase);
-        controlPanelButtons.add(numberSeven);
-        controlPanelButtons.add(numberEight);
-        controlPanelButtons.add(numberNine);
-        controlPanelButtons.add(solve);
+        this.controlPanelButtonsBlue[10] =  R.drawable.control_panel_blue_erase;
+        this.controlPanelButtonsBlue[11] =  R.drawable.control_panel_blue_7;
+        this.controlPanelButtonsBlue[12] =  R.drawable.control_panel_blue_8;
+        this.controlPanelButtonsBlue[13] =  R.drawable.control_panel_blue_9;
+        this.controlPanelButtonsBlue[14] =  R.drawable.control_panel_blue_solve;
+
+        //Make red buttons
+        // Row One
+        this.controlPanelButtonsRed[0] = R.drawable.control_panel_red_undo;
+        this.controlPanelButtonsRed[1] = R.drawable.control_panel_red_1;
+        this.controlPanelButtonsRed[2] = R.drawable.control_panel_red_2;
+        this.controlPanelButtonsRed[3] = R.drawable.control_panel_red_3;
+        this.controlPanelButtonsRed[4] = R.drawable.control_panel_red_set_notes;
+
+        // Row two
+        this.controlPanelButtonsRed[5] = R.drawable.control_panel_red_redo;
+        this.controlPanelButtonsRed[6] = R.drawable.control_panel_red_4;
+        this.controlPanelButtonsRed[7] = R.drawable.control_panel_red_5;
+        this.controlPanelButtonsRed[8] = R.drawable.control_panel_red_6;
+        this.controlPanelButtonsRed[9] = R.drawable.control_panel_red_get_hint;
+
+        // Row three
+        this.controlPanelButtonsRed[10] = R.drawable.control_panel_red_erase;
+        this.controlPanelButtonsRed[11] = R.drawable.control_panel_red_7;
+        this.controlPanelButtonsRed[12] = R.drawable.control_panel_red_8;
+        this.controlPanelButtonsRed[13] = R.drawable.control_panel_red_9;
+        this.controlPanelButtonsRed[14] = R.drawable.control_panel_red_solve;
+
+        setControlPanelState(new boolean[]
+                {
+                        false,false,false,false,false,
+                        false,false,false,false,false,
+                        false,false,false,false,false
+                });
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(final int position, View convertView, ViewGroup parent)
     {
-        View cell;
+        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        View cell = layoutInflater.inflate(R.layout.control_panel_cell, null);
 
-        if(convertView == null)
+        ImageButton newButton = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
+        newButton.setPadding(1, 1, 1, 1);
+
+        final ControlPanelCell currentCell = controlPanelState.get(position);
+        if(currentCell.isHighlighted())
         {
-            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-            cell = layoutInflater.inflate(R.layout.control_panel_cell, null);
-            final int pos = position;
-            ImageButton newButton = (ImageButton) cell.findViewById(R.id.conrolPanelItem);
-            newButton.setPadding(1, 1, 1, 1);
-            newButton.setImageResource(controlPanelButtons.get(position).getImageResource());
-            newButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("TAG", "ControlPanel short click: " + pos);
-                }
-            });
-            newButton.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Log.d("TAG", "ControlPanel long click: " + pos);
-                    return false;
-                }
-            });
+            newButton.setImageResource(controlPanelButtonsRed[position]);
         }
         else
         {
-            cell = convertView;
+            newButton.setImageResource(controlPanelButtonsBlue[position]);
         }
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "ControlPanel short click: " + position);
+                setAllButtonsBlue();
+                setButtonState(position, true);
+                notifyDataSetChanged();
+            }
+        });
+        newButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("TAG", "ControlPanel long click: " + position);
+                return false;
+            }
+        });
         return cell;
+    }
+
+    public ArrayList<ControlPanelCell> getControlPanelState() {
+        return controlPanelState;
+    }
+
+    public void setControlPanelState(boolean[] newState)
+    {
+        ArrayList<ControlPanelCell> newList = new ArrayList<ControlPanelCell>();
+        for(int i = 0; i < NUM_OF_BUTTONS; i++)
+        {
+            ControlPanelCell newCell = new ControlPanelCell(getContext());
+            if(newState[i])
+            {
+                newCell.setHighlighted(true);
+                newCell.setImageResource(this.controlPanelButtonsRed[i]);
+            }
+            newCell.setHighlighted(false);
+            newCell.setImageResource(this.controlPanelButtonsBlue[i]);
+
+            newList.add(newCell);
+        }
+        this.controlPanelState = newList;
+    }
+
+    public void setAllButtonsBlue()
+    {
+        for(int i = 0; i < NUM_OF_BUTTONS; i++)
+        {
+            setButtonState(i,false);
+        }
+    }
+
+    public void setButtonState(int position, boolean flag)
+    {
+        this.controlPanelState.get(position).setHighlighted(flag);
+        if(flag)
+        {
+            this.controlPanelState.get(position).setImageResource(this.controlPanelButtonsRed[position]);
+        }
+        else
+        {
+            this.controlPanelState.get(position).setImageResource(this.controlPanelButtonsBlue[position]);
+        }
     }
 
     @Override
     public long getItemId(int position) {
-        return this.controlPanelButtons.get(position).getId();
+        return this.controlPanelState.get(position).getId();
     }
 
     @Override
     public int getCount() {
-        return controlPanelButtons.size();
+        return controlPanelState.size();
     }
 
     @Override
     public ControlPanelCell getItem(int position) {
-        return this.controlPanelButtons.get(position);
-    }
-
-    public boolean isOne() {
-        return one;
-    }
-
-    public void setOne(boolean one) {
-        this.one = one;
-    }
-
-    public boolean isTwo() {
-        return two;
-    }
-
-    public void setTwo(boolean two) {
-        this.two = two;
-    }
-
-    public boolean isThree() {
-        return three;
-    }
-
-    public void setThree(boolean three) {
-        this.three = three;
-    }
-
-    public boolean isFour() {
-        return four;
-    }
-
-    public void setFour(boolean four) {
-        this.four = four;
-    }
-
-    public boolean isFive() {
-        return five;
-    }
-
-    public void setFive(boolean five) {
-        this.five = five;
-    }
-
-    public boolean isSix() {
-        return six;
-    }
-
-    public void setSix(boolean six) {
-        this.six = six;
-    }
-
-    public boolean isSeven() {
-        return seven;
-    }
-
-    public void setSeven(boolean seven) {
-        this.seven = seven;
-    }
-
-    public boolean isEight() {
-        return eight;
-    }
-
-    public void setEight(boolean eight) {
-        this.eight = eight;
-    }
-
-    public boolean isNine() {
-        return nine;
-    }
-
-    public void setNine(boolean nine) {
-        this.nine = nine;
+        return this.controlPanelState.get(position);
     }
 
     public Context getContext() {
@@ -212,29 +187,5 @@ public class ControlPanelAdapter extends BaseAdapter{
 
     public void setContext(Context context) {
         this.context = context;
-    }
-
-    public boolean isUndo() {
-        return undo;
-    }
-
-    public void setUndo(boolean undo) {
-        this.undo = undo;
-    }
-
-    public boolean isRedo() {
-        return redo;
-    }
-
-    public void setRedo(boolean redo) {
-        this.redo = redo;
-    }
-
-    public boolean isErase() {
-        return erase;
-    }
-
-    public void setErase(boolean erase) {
-        this.erase = erase;
     }
 }

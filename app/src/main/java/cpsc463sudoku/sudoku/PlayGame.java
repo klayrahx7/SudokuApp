@@ -53,7 +53,18 @@ public class PlayGame extends Fragment {
         GridView controlPanel = (GridView)v.findViewById(R.id.controlPanelView);
         ControlPanelAdapter controlPanelAdapter = new ControlPanelAdapter(getActivity());
         controlPanel.setAdapter(controlPanelAdapter);
+        //playGame(boardAdapter,controlPanelAdapter);
 
         return v;
+    }
+
+    public void playGame(BoardAdapter board, ControlPanelAdapter panel)
+    {
+
+    }
+
+    public void clickedPanel()
+    {
+
     }
 }
