@@ -190,8 +190,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
             @Override
             public void onClick(View v) {
                 Log.d("TAG", "Board short click: " + position);
-                setAllBoardHighlights(position, true);
-                currentCell.setSelected(true);
+                setAllBoardHighlights(position);
                 boardCallback.cellClicked(position);
             }
         });
@@ -253,9 +252,22 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
         return newList;
     }
 
-    private void setAllBoardHighlights(int position, boolean flag)
+    public int getSelectedCell()
     {
-        removeAllCellEffects(false);
+        for(int i = 0 ; i < getBoardCurrentState().length(); i++)
+        {
+            if(this.boardCellMap.get(i).isSelected())
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void setAllBoardHighlights(int position)
+    {
+        removeAllCellEffects();
+        boardCellMap.get(position).setSelected(true);
         setIsHighlightedRowAndColumn(position, true);
         setIsHighlightedSimiliarTiles(position, true);
     }
@@ -263,12 +275,12 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     /*
       Set all highlighting
      */
-    private void removeAllCellEffects(boolean flag)
+    private void removeAllCellEffects()
     {
         for(int i = 0 ; i < getBoardCurrentState().length(); i++)
         {
-            this.boardCellMap.get(i).setHighlighted(flag);
-            this.boardCellMap.get(i).setSelected(flag);
+            this.boardCellMap.get(i).setHighlighted(false);
+            this.boardCellMap.get(i).setSelected(false);
         }
     }
 

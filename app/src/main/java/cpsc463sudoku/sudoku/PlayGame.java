@@ -119,6 +119,7 @@ public class PlayGame extends Fragment implements BoardAdapter.boardCallback, Co
         {
 
         }
+        boardAdapter.setAllBoardHighlights(boardAdapter.getSelectedCell());
         controlPanelAdapter.notifyDataSetChanged();
         boardAdapter.notifyDataSetChanged();
     }
@@ -127,11 +128,6 @@ public class PlayGame extends Fragment implements BoardAdapter.boardCallback, Co
     public void onStart()
     {
         super.onStart();
-    }
-
-    public void boardClicked()
-    {
-
     }
 
     public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
