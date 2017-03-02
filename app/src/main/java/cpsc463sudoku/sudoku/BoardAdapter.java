@@ -213,9 +213,17 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
             name.setTextColor(res.getColor(R.color.Black));
             name.setBackgroundColor(res.getColor(R.color.Highlighted));
         }
+
+        //Modify selected cell
         if(currentCell.isSelected())
         {
             name.setBackgroundColor(res.getColor(R.color.Selected));
+        }
+
+        //Modify Hint cell
+        if(currentCell.isHint())
+        {
+            name.setBackgroundColor(res.getColor(R.color.Hint));
         }
 
         // Display text on button
@@ -442,30 +450,6 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     }
 
     /*
-     * When the user short presses a single board_cell:
-     *  The current board_cell is marked as selected.
-     *  The row and column that contain the board_cell become highlighted.
-     *  If a value already exists in the board_cell, the corresponding button is highlighted.
-     *  When a new button is pressed, that value is saved into the current board_cell.
-     *  The newly pressed button is highlighted
-    */
-    private void setCurrentCellMainNumber(int newValue, int position)
-    {
-        this.boardCellMap.get(position).setCurrentValue(newValue);
-    }
-
-    /*
-     * When the user long presses a single board_cell:
-     *  The current board_cell is marked as selected.
-     *  The row and column that contain the board_cell become highlighted.
-     *  If a
-    */
-    private void setCurrentCellNotes()
-    {
-
-    }
-
-    /*
      * Checks to see if the user has compleatly filled the board.
      */
     private boolean isFull()
@@ -498,13 +482,23 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     /*
      * Asks the solver for a hint on a particular board_cell.
      */
-    private void getHint(int xPos, int yPos)
+    public void getHint(BoardCell cell)
     {
-        if(this.isSolved)
+        for(int i = 0; i < boardCellMap.size(); i++)
         {
-            int hintPosition = (xPos+1) * (yPos+1);
-            this.boardCellMap.get(hintPosition).setCurrentValue(Integer.valueOf(this.boardSolvedState.substring(hintPosition,hintPosition+1)));
-            this.boardCellMap.get(hintPosition).setHint(true);
+            if(boardCellMap.get(i) == cell)
+            {
+                if(this.boardSolvedState != null)
+                {
+                    this.boardCellMap.get(i).setCurrentValue(Integer.valueOf(this.boardSolvedState.substring(i,i+1)));
+                    this.boardCellMap.get(i).setHint(true);
+                }
+                else
+                {
+                    // TODO: Start solving this board and notify the user we have no current hint
+                }
+
+            }
         }
     }
 
