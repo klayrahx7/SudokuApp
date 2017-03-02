@@ -2,21 +2,16 @@ package cpsc463sudoku.sudoku;
 
 
 
-import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
@@ -105,7 +100,7 @@ public class HomePage extends Fragment {
             String linepl;
             String linesl;
             if ((linepl = brpl.readLine()) != null && (linesl = brsl.readLine()) != null) {
-                BoardAdapter newBoardAdapter = new BoardAdapter(getActivity(),linepl);
+                BoardAdapter newBoardAdapter = new BoardAdapter(linepl);
                 newBoardAdapter.setBoardSolvedState(linesl);
                 Log.d("Created a new Board: ", newBoardAdapter.toString());
                 Log.d("Its Solution is    : ", newBoardAdapter.getBoardSolvedState());
@@ -119,7 +114,7 @@ public class HomePage extends Fragment {
             Log.d("Caught Exception: ", e.getMessage());
             e.printStackTrace();
         }
-        return new BoardAdapter(getActivity(),"");
+        return new BoardAdapter("");
     }
 
 }
