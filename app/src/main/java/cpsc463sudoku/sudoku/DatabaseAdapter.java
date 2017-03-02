@@ -31,7 +31,7 @@ public class DatabaseAdapter
 		ContentValues values = new ContentValues();
 
 		values.put(SQLHelper.COLUMN_BOARDID, newBoardAdapter.getBoardID());
-		values.put(SQLHelper.COLUMN_BOARD_INITIAL_STATE, newBoardAdapter.getBoardInitialState());
+		values.put(SQLHelper.COLUMN_BOARD_INITIAL_STATE, newBoardAdapter.getBoardStateList().get(0));
 
 		database.insertWithOnConflict(dbHelper.GetBoardsTable(), null, values, SQLiteDatabase.CONFLICT_REPLACE);
 		Log.i(TAG, "Inserted BoardAdapter : " + newBoardAdapter.getBoardID() + " Into Database.");

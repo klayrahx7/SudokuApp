@@ -14,6 +14,8 @@ import java.util.ArrayList;
 public class BoardCell implements Parcelable
 {
     public static final int EMPTY_CELL = 0;
+    public static final int NUM_NOTES = 9;
+    public static boolean NOTES_SET;
     private long id;
     private int currentValue;
     private boolean isHighlighted;
@@ -27,10 +29,11 @@ public class BoardCell implements Parcelable
     public BoardCell()
     {
         this.id = -1;
+        this.NOTES_SET = false;
         this.currentValue = EMPTY_CELL;
         this.isHighlighted = false;
         this.isSelected = false;
-        this.userNotes = new int[9];
+        this.userNotes = new int[NUM_NOTES];
     }
 
     public static final Parcelable.Creator<BoardCell> CREATOR = new Parcelable.Creator<BoardCell>()
@@ -48,9 +51,9 @@ public class BoardCell implements Parcelable
     {
         this.id = in.readLong();
         this.currentValue = in.readInt();
-        boolean[] bools = {this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect};
+        boolean[] bools = {this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect, this.NOTES_SET};
         in.readBooleanArray(bools);
-        this.userNotes = new int[9];
+        this.userNotes = new int[NUM_NOTES];
         in.readIntArray(this.userNotes);
     }
 
@@ -58,7 +61,7 @@ public class BoardCell implements Parcelable
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(this.id);
         out.writeInt(this.currentValue);
-        out.writeBooleanArray(new boolean[]{this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect});
+        out.writeBooleanArray(new boolean[]{this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect, this.NOTES_SET});
         out.writeIntArray(this.userNotes);
     }
 
@@ -89,14 +92,7 @@ public class BoardCell implements Parcelable
         this.isHighlighted = newBoardCell.isHighlighted();
         this.isSelected = newBoardCell.isSelected();
         this.userNotes = newBoardCell.getUserNotes();
-    }
-
-    public BoardCell(int newCurrentValue, boolean isHighlighted, boolean isSelected, int[] userNotes)
-    {
-        this.currentValue = newCurrentValue;
-        this.isHighlighted = isHighlighted;
-        this.isSelected = isSelected();
-        this.userNotes = userNotes;
+        this.NOTES_SET = newBoardCell.NOTES_SET;
     }
 
     private boolean isInteger(String s)
