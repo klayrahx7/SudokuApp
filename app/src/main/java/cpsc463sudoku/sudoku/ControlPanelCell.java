@@ -3,11 +3,7 @@ package cpsc463sudoku.sudoku;
 import android.content.Context;
 import android.widget.ImageButton;
 
-/**
- * Created by Blacklotis on 2/20/2017.
- */
-
-public class ControlPanelCell {
+class ControlPanelCell {
     private long id;
     private boolean isHighlighted;
     private int imageResource;
@@ -16,23 +12,20 @@ public class ControlPanelCell {
     public ControlPanelCell()
     {
         this.isHighlighted = false;
-        this.imageResource = -1;
         this.cellButton = new ImageButton(null);
     }
 
-    public ControlPanelCell(Context context)
+    ControlPanelCell(Context context)
     {
         this.isHighlighted = false;
-        this.imageResource = -1;
         this.cellButton = new ImageButton(context);
-        this.cellButton.setImageResource(-1);
     }
 
     public int getImageResource() {
         return imageResource;
     }
 
-    public void setImageResource(int imageResource) {
+    void setImageResource(int imageResource) {
         this.imageResource = imageResource;
     }
 
@@ -53,11 +46,11 @@ public class ControlPanelCell {
         this.id = id;
     }
 
-    public boolean isHighlighted() {
+    boolean isHighlighted() {
         return isHighlighted;
     }
 
-    public void setHighlighted(boolean highlighted) {
+    void setHighlighted(boolean highlighted) {
         isHighlighted = highlighted;
     }
 }

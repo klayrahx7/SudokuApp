@@ -13,9 +13,23 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 
-/**
- * Created by Nguyen on 2/17/2017.
- */
+import static android.view.KeyEvent.KEYCODE_BACK;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.EIGHT;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.ERASE;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.FIVE;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.FOUR;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.HINT;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.NINE;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.NOTES;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.ONE;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.REDO;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.SEVEN;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.SIX;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.SOLVE;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.THREE;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.TWO;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.UNDO;
+import static cpsc463sudoku.sudoku.ControlPanelAdapter.buttonRed;
 
 public class PlayGame extends Fragment implements BoardAdapter.boardCallback, ControlPanelAdapter.controlPanelCallback {
 
@@ -29,7 +43,9 @@ public class PlayGame extends Fragment implements BoardAdapter.boardCallback, Co
         super.onCreate(savedInstanceState);
         Bundle gameState = this.getArguments();
         boardAdapter = gameState.getParcelable("gameState");
+        String solvedState = boardAdapter.getBoardSolvedState();
         boardAdapter = new BoardAdapter(getActivity(), boardAdapter.getBoardStateList().get(0), this);
+        boardAdapter.setBoardSolvedState(solvedState);
         controlPanelAdapter = new ControlPanelAdapter(getActivity(), this);
     }
 
@@ -45,31 +61,31 @@ public class PlayGame extends Fragment implements BoardAdapter.boardCallback, Co
             switch(currentCell.getCurrentValue())
             {
                 case 1:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.ONE, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(ONE, buttonRed);
                     break;
                 case 2:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.TWO, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(TWO, buttonRed);
                     break;
                 case 3:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.THREE, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(THREE, buttonRed);
                     break;
                 case 4:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.FOUR, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(FOUR, buttonRed);
                     break;
                 case 5:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.FIVE, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(FIVE, buttonRed);
                     break;
                 case 6:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.SIX, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(SIX, buttonRed);
                     break;
                 case 7:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.SEVEN, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(SEVEN, buttonRed);
                     break;
                 case 8:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.EIGHT, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(EIGHT, buttonRed);
                     break;
                 case 9:
-                    controlPanelAdapter.setButtonState(controlPanelAdapter.NINE, controlPanelAdapter.buttonRed);
+                    controlPanelAdapter.setButtonState(NINE, buttonRed);
                     break;
                 case 0:
                     //boardAdapter.setSolved(true);
@@ -85,78 +101,82 @@ public class PlayGame extends Fragment implements BoardAdapter.boardCallback, Co
     public void panelClicked(int position)
     {
         BoardCell currentCell = boardAdapter.getSelectedCell();
+        long currentCellPosition = currentCell.getId();
 
         // This case is only active when the last keypress was Notes or the cell already has notes
-        if(currentCell.NOTES_SET)
+        if(currentCell.isNotesSet)
         {
             int[] notes = currentCell.getUserNotes();
-            if (position == controlPanelAdapter.ONE) {
+            if (position == ONE) {
                 notes[0] = 1;
-            } else if (position == controlPanelAdapter.TWO) {
+            } else if (position == TWO) {
                 notes[1] = 2;
-            } else if (position == controlPanelAdapter.THREE) {
+            } else if (position == THREE) {
                 notes[2] = 3;
-            } else if (position == controlPanelAdapter.FOUR) {
+            } else if (position == FOUR) {
                 notes[3] = 4;
-            } else if (position == controlPanelAdapter.FIVE) {
+            } else if (position == FIVE) {
                 notes[4] = 5;
-            } else if (position == controlPanelAdapter.SIX) {
+            } else if (position == SIX) {
                 notes[5] = 6;
-            } else if (position == controlPanelAdapter.SEVEN) {
+            } else if (position == SEVEN) {
                 notes[6] = 7;
-            } else if (position == controlPanelAdapter.EIGHT) {
+            } else if (position == EIGHT) {
                 notes[7] = 8;
-            } else if (position == controlPanelAdapter.NINE) {
+            } else if (position == NINE) {
                 notes[8] = 9;
             }
         }
 
         // We can change any cell that is not an initial value cell (Blue)
         if(!currentCell.isInitialValue()) {
-            if (position == controlPanelAdapter.ONE) {
+            if (position == ONE) {
                 currentCell.setCurrentValue(1);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.TWO) {
+            } else if (position == TWO) {
                 currentCell.setCurrentValue(2);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.THREE) {
+            } else if (position == THREE) {
                 currentCell.setCurrentValue(3);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.FOUR) {
+            } else if (position == FOUR) {
                 currentCell.setCurrentValue(4);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.FIVE) {
+            } else if (position == FIVE) {
                 currentCell.setCurrentValue(5);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.SIX) {
+            } else if (position == SIX) {
                 currentCell.setCurrentValue(6);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.SEVEN) {
+            } else if (position == SEVEN) {
                 currentCell.setCurrentValue(7);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.EIGHT) {
+            } else if (position == EIGHT) {
                 currentCell.setCurrentValue(8);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.NINE) {
+            } else if (position == NINE) {
                 currentCell.setCurrentValue(9);
                 boardAdapter.advanceBoardState(boardAdapter.toString());
-            } else if (position == controlPanelAdapter.UNDO) {
+            } else if (position == UNDO) {
                 // Set current state to last known state
                 boardAdapter.undoBoardState();
-            }else if (position == controlPanelAdapter.REDO) {
+            }else if (position == REDO) {
                 // Set current state to last known state
                 boardAdapter.redoBoardState();
-            }else if (position == controlPanelAdapter.ERASE) {
+            }else if (position == ERASE) {
                 // Set current state to last known state
                 currentCell.setCurrentValue(BoardCell.EMPTY_CELL);
                 currentCell.setUserNotes(new int[BoardCell.NUM_NOTES]);
-                currentCell.NOTES_SET = false;
-            }else if (position == controlPanelAdapter.SOLVE) {
+                currentCell.isNotesSet = false;
+            }else if (position == SOLVE) {
                 // Set current state to solved state
                 boardAdapter.setBoardCurrentState(boardAdapter.getBoardSolvedState());
-            }else if (position == controlPanelAdapter.NOTES) {
+            }else if (position == NOTES) {
                 // Set current state to last known state
-              currentCell.NOTES_SET = !currentCell.NOTES_SET;
+              currentCell.isNotesSet = !currentCell.isNotesSet;
+            }else if (position == HINT) {
+                // Set current state to last known state
+                boardAdapter.getHint(currentCell);
             }
 
             // Let the board Adapter know that we have changed it's state
@@ -200,10 +220,11 @@ public class PlayGame extends Fragment implements BoardAdapter.boardCallback, Co
         v.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if(keyEvent.getKeyCode() == keyEvent.KEYCODE_BACK)
+                if(keyEvent.getKeyCode() == KEYCODE_BACK)
                 {
                     ft = getFragmentManager().beginTransaction();
                     getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    ft.commit();
                     return true;
                 }
                 else

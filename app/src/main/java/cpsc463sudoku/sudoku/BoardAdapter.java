@@ -1,34 +1,29 @@
 package cpsc463sudoku.sudoku;
 
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import static android.view.Gravity.START;
+import static cpsc463sudoku.sudoku.BoardCell.EMPTY_CELL;
 
-/**
- * Created by Mark Ballin on 2/12/2017.
- */
+class BoardAdapter extends BaseAdapter implements Parcelable {
 
-public class BoardAdapter extends BaseAdapter implements Parcelable {
-
-    public static int boardStatePosition;
-    public static final int NUM_OF_ROWS = 9;
-    public static final int NNUM_OF_COLS = 9;
-    public static final int BOARD_MOVE_HISTORY_LIMIT = 1000;
+    private static int boardStatePosition;
+    private static final int NUM_OF_ROWS = 9;
+    private static final int NUM_OF_COLS = 9;
+    private static final int BOARD_MOVE_HISTORY_LIMIT = 1000;
 
     private Context context;
     private ArrayList<BoardCell> boardCellMap;
@@ -45,31 +40,31 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     /*
      * Default constructor: Used when building a new game only.
      */
-    public BoardAdapter(String newBoardState)
+    BoardAdapter(String newBoardState)
     {
-        this.boardStatePosition = 0;
+        boardStatePosition = 0;
         this.boardID = -1;
         this.boardCurrentState = newBoardState;
         this.isSolved = false;
         this.isSFull = false;
         this.isComplete = false;
-        this.boardStateList = new ArrayList<String>(Arrays.asList(new String[BOARD_MOVE_HISTORY_LIMIT]));
-        this.boardStateList.set(boardStatePosition, newBoardState);
+        this.boardStateList = new ArrayList<>(BOARD_MOVE_HISTORY_LIMIT);
+        this.boardStateList.add(newBoardState);
         this.boardCellMap = this.setCurrentCellMap(newBoardState);
     }
 
     /*
      * Parcelable constructor: used when adding this class to a bundle.
      */
-    public BoardAdapter(Parcel in)
+    private BoardAdapter(Parcel in)
     {
-        this.boardStatePosition = in.readInt();
+        boardStatePosition = in.readInt();
         this.boardID = in.readLong();
         this.boardCurrentState = in.readString();
         this.boardSolvedState = in.readString();
         String[] tempBoardStateList = new String[BOARD_MOVE_HISTORY_LIMIT];
         in.readStringArray(tempBoardStateList);
-        this.boardStateList = new ArrayList<String>(Arrays.asList(tempBoardStateList));
+        this.boardStateList = new ArrayList<>(BOARD_MOVE_HISTORY_LIMIT);
         this.boardCellMap = this.setCurrentCellMap(boardCurrentState);
         in.readBooleanArray(new boolean[]{this.isSolved, this.isSFull, this.isComplete});
     }
@@ -77,9 +72,9 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     /*
      * Fragment constructor: used when building this object from a fragment
      */
-    public BoardAdapter(Context context, String newBoardState, boardCallback callback)
+    BoardAdapter(Context context, String newBoardState, boardCallback callback)
     {
-        this.boardStatePosition = 0;
+        boardStatePosition = 0;
         this.context = context;
         boardCallback = callback;
         this.boardID = -1;
@@ -87,8 +82,8 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
         this.isSolved = false;
         this.isSFull = false;
         this.isComplete = false;
-        this.boardStateList = new ArrayList<String>(Arrays.asList(new String[BOARD_MOVE_HISTORY_LIMIT]));
-        this.boardStateList.set(boardStatePosition, newBoardState);
+        this.boardStateList = new ArrayList<>(BOARD_MOVE_HISTORY_LIMIT);
+        this.boardStateList.add(newBoardState);
         this.boardCellMap = this.setCurrentCellMap(newBoardState);
     }
 
@@ -147,7 +142,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     }
 
     // Fragment callback
-    public interface boardCallback
+    interface boardCallback
     {
         void cellClicked(int position);
     }
@@ -162,7 +157,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
         String output = "";
         for(BoardCell c : this.boardCellMap)
         {
-            if(c.getCurrentValue() != BoardCell.EMPTY_CELL)
+            if(c.getCurrentValue() != EMPTY_CELL)
             {
                 output += String.valueOf(c.getCurrentValue());
             }
@@ -174,85 +169,107 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
         return output;
     }
 
+    /*
+     * View caching for performance
+     */
+    private static class ViewHolder {
+        Button button;
+        View view;
+        ViewGroup.LayoutParams params;
+        int position;
+    }
+
     // Inflate and build board grid view
     @Override
     public View getView(final int position, View convertView, ViewGroup parent)
     {
-        // Get current context to build in
-        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        View v = layoutInflater.inflate(R.layout.board_cell, null);
+        final ViewHolder holder;
+        Resources res;
 
-        // Build and describe the look of the board cells (buttons)
-        Button name = (Button) v.findViewById(R.id.grid_item);
-        ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) name.getLayoutParams();
-        Resources res = context.getResources();
-        int screen_width = res.getDisplayMetrics().widthPixels;
-        int screen_height = res.getDisplayMetrics().heightPixels;
-        params.width = screen_width / NNUM_OF_COLS;
-        params.height = (int)(screen_height * 0.65) / NUM_OF_ROWS;
+        if(convertView == null)
+        {
+            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            holder = new ViewHolder();
+            res = context.getResources();
+            int screen_width = res.getDisplayMetrics().widthPixels;
+            int screen_height = res.getDisplayMetrics().heightPixels;
+
+            holder.view = inflater.inflate(R.layout.board_cell,null);
+            holder.button = (Button) holder.view.findViewById(R.id.grid_item);
+            holder.params = holder.button.getLayoutParams();
+            holder.position = position;
+            holder.params.width = screen_width / NUM_OF_COLS;
+            holder.params.height = (int)(screen_height * 0.65) / NUM_OF_ROWS;
+            holder.view.setTag(holder);
+        }
+        else
+        {
+            holder = (ViewHolder)convertView.getTag();
+        }
+
+
         final BoardCell currentCell = getCurrentCellMap().get(position);
-        currentCell.setId((long)position);
+        currentCell.setId(position);
 
         // Set default button parameters
-        name.setLayoutParams(params);
-        name.setTextColor(res.getColor(R.color.White));
-        name.setTextSize(30);
-        name.setPadding(0,0,0,0);
-        name.setBackgroundColor(res.getColor(R.color.Transparent));
+        holder.button.setTextColor(ContextCompat.getColor(context, R.color.White));
+        holder.button.setTextSize(30);
+        holder.button.setPadding(0,0,0,0);
+        holder.button.setBackgroundColor(ContextCompat.getColor(context, R.color.Transparent));
 
         // Display Notes
-        if(currentCell.NOTES_SET)
+        if(currentCell.isNotesSet)
         {
             LinearLayout.LayoutParams notesParam = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            notesParam.gravity = Gravity.LEFT;
-            name.setLayoutParams(notesParam);
-            name.setTextSize(10);
+            notesParam.gravity = START;
+            holder.button.setLayoutParams(notesParam);
+            holder.button.setTextSize(10);
             int[] notes = currentCell.getUserNotes();
             String note = "";
-            for(int i = 0; i < notes.length; i++)
+            for(int i : notes)
             {
                 note += String.valueOf(notes[i]);
             }
-            name.setText(note);
+            holder.button.setText(note);
         }
 
         // Highlighting for row and column
         if(currentCell.isHighlighted())
         {
-            name.setTextColor(res.getColor(R.color.Black));
-            name.setBackgroundColor(res.getColor(R.color.Highlighted));
+            holder.button.setTextColor(ContextCompat.getColor(context, R.color.Black));
+            holder.button.setBackgroundColor(ContextCompat.getColor(context, R.color.Highlighted));
         }
 
         // Highlighting for selected v
         if(currentCell.isSelected())
         {
-            name.setBackgroundColor(res.getColor(R.color.Selected));
+            holder.button.setBackgroundColor(ContextCompat.getColor(context, R.color.Selected));
         }
 
         // Highlighting for hints
         if(currentCell.isHint())
         {
-            name.setBackgroundColor(res.getColor(R.color.Hint));
+            holder.button.setBackgroundColor(ContextCompat.getColor(context, R.color.Highlighted));
         }
 
         // Highlighting initial buttons
         if(currentCell.isInitialValue()) {
-            name.setTextColor(res.getColor(R.color.InitialValue));
+            holder.button.setTextColor(ContextCompat.getColor(context, R.color.InitialValue));
         }
 
         // Display text on button
-        if(currentCell.getCurrentValue() == 0)
+        if(currentCell.getCurrentValue() == EMPTY_CELL)
         {
-            name.setText(" ");
+            holder.button.setText(" ");
         }
         else
         {
-            name.setText(String.valueOf(currentCell.getCurrentValue()));
+            holder.button.setText(String.valueOf(currentCell.getCurrentValue()));
         }
 
         // Build click listeners for each button
-        name.setOnClickListener(new View.OnClickListener() {
+        holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TAG", "Board short click: " + currentCell.getId());
@@ -260,7 +277,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
                 boardCallback.cellClicked((int)currentCell.getId());
             }
         });
-        name.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.button.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Log.d("TAG", "Board long click: " + position);
@@ -269,32 +286,35 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
             }
         });
 
-        return v;
+        return holder.view;
     }
 
     // Add new state to the state list
-    public void advanceBoardState(String newState)
+    void advanceBoardState(String newState)
     {
         boardStatePosition++;
-        this.boardStateList.set(boardStatePosition, newState);
+        this.boardStateList.add(newState);
         this.boardCurrentState = newState;
     }
 
     // If no changes have been make, redo the last applied state
-    public void redoBoardState()
+    void redoBoardState()
     {
-        boardStatePosition++;
-        this.boardCurrentState = this.boardStateList.get(boardStatePosition).toString();
-        this.boardCellMap = setCurrentCellMap(this.boardCurrentState);
+        if(boardStatePosition < this.boardStateList.size() - 1)
+        {
+            boardStatePosition++;
+            this.boardCurrentState = this.boardStateList.get(boardStatePosition);
+            this.boardCellMap = setCurrentCellMap(this.boardCurrentState);
+        }
     }
 
     // Revert to the last game state, keep all old states until a change is made.
-    public void undoBoardState()
+    void undoBoardState()
     {
-        boardStatePosition--;
-        if(boardStatePosition >= 0)
+        if(boardStatePosition > 0)
         {
-            this.boardCurrentState = this.boardStateList.get(boardStatePosition).toString();
+            boardStatePosition--;
+            this.boardCurrentState = this.boardStateList.get(boardStatePosition);
             this.boardCellMap = setCurrentCellMap(this.boardCurrentState);
         }
     }
@@ -307,17 +327,14 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
      */
     private ArrayList<BoardCell> setCurrentCellMap(String newBoardState)
     {
-        ArrayList<BoardCell> newList = new ArrayList<BoardCell>();
+        ArrayList<BoardCell> newList = new ArrayList<>();
         for(int i = 0; i < newBoardState.length(); i++)
         {
             BoardCell newBoardCell = new BoardCell(newBoardState.substring(i,i+1));
-            if(boardCurrentState.equals(boardStateList.get(0)))
+            if(newBoardCell.getCurrentValue() != EMPTY_CELL)
             {
-                if(newBoardCell.getCurrentValue() != BoardCell.EMPTY_CELL)
-                {
-                    newBoardCell.setInitialValue(true);
-                    newBoardCell.setSolved(true);
-                }
+                newBoardCell.setInitialValue(true);
+                newBoardCell.setSolved(true);
             }
             newList.add(newBoardCell);
         }
@@ -327,7 +344,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
 
     // Returns the  selected cell.
     // If there is none selected, returns an empty cell.
-    public BoardCell getSelectedCell()
+    BoardCell getSelectedCell()
     {
         for(int i = 0 ; i < getBoardCurrentState().length(); i++)
         {
@@ -345,7 +362,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
      *      All cells with the same value as the selected cell.
      *      Current row and column
      */
-    public void setAllBoardHighlights(BoardCell cell)
+    void setAllBoardHighlights(BoardCell cell)
     {
         removeBoardHighlighting();
         cell.setSelected(true);
@@ -359,7 +376,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
      * Selected cell
      * Cells similar to the selected cell.
      */
-    private void removeBoardHighlighting()
+    void removeBoardHighlighting()
     {
         for(int i = 0 ; i < getBoardCurrentState().length(); i++)
         {
@@ -374,7 +391,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     private void setIsHighlightedSimilarTiles(BoardCell cell, boolean flag)
     {
         // Make sure we dont ever highlight empty cells
-        if(cell.getCurrentValue() != BoardCell.EMPTY_CELL)
+        if(cell.getCurrentValue() != EMPTY_CELL)
         {
             // Search entire list
             for(int i = 0 ; i < getBoardCurrentState().length(); i++)
@@ -394,19 +411,22 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
      */
     private void setIsHighlightedRowAndColumn(BoardCell cell, boolean flag)
     {
-        int[] columnsToHighlight = getColumn((int)cell.getId());
-        int[] rowsToHighlight = getRow((int)cell.getId());
-
-        // Highlight currently selected row
-        for(int i = 0 ; i < columnsToHighlight.length; i++)
+        if(cell.getId() != EMPTY_CELL)
         {
-            this.boardCellMap.get(columnsToHighlight[i]).setHighlighted(flag);
-        }
+            int[] columnsToHighlight = getColumn((int)cell.getId());
+            int[] rowsToHighlight = getRow((int)cell.getId());
 
-        // Highlight currently selected column
-        for(int i = 0 ; i < rowsToHighlight.length; i++)
-        {
-            this.boardCellMap.get(rowsToHighlight[i]).setHighlighted(flag);
+            // Highlight currently selected row
+            for(int i : columnsToHighlight)
+            {
+                this.boardCellMap.get(i).setHighlighted(flag);
+            }
+
+            // Highlight currently selected column
+            for(int i : rowsToHighlight)
+            {
+                this.boardCellMap.get(i).setHighlighted(flag);
+            }
         }
     }
 
@@ -448,7 +468,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     }
 
     // Helper function to get the current square of the selected item
-    private final int[] getSquare(int position)
+    private int[] getSquare(int position)
     {
         final int[] squareOne = new int[] { 0,1,2,9,10,11,18,19,20 };
         final int[] squareTwo = new int[] { 3,4,5,12,13,14,21,22,23 };
@@ -536,12 +556,34 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
     {
         for( BoardCell c : this.boardCellMap)
         {
-            if(c.getCurrentValue() == c.EMPTY_CELL)
+            if(c.getCurrentValue() == EMPTY_CELL)
             {
                 return false;
             }
         }
         return true;
+    }
+
+
+    /*
+    * Asks the solver for a hint on a particular board_cell.
+    */
+    void getHint(BoardCell newCell)
+    {
+        if(this.isSolved) {
+            for (BoardCell i : boardCellMap) {
+                if (i == newCell) {
+                    if (this.boardSolvedState != null) {
+                        i.setCurrentValue(Integer.valueOf(this.boardSolvedState.substring((int)i.getId(), (int)(i.getId() + 1))));
+                        i.setHint(true);
+                    }
+                    else
+                    {
+                        // TODO: Start solving this board and notify the user we have no current hint
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -559,7 +601,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
         return false;
     }
 
-    public long getBoardID() {
+    long getBoardID() {
         // TODO: ask database for nexst available boardID
         return boardID;
     }
@@ -568,7 +610,7 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
         this.boardID = boardID;
     }
 
-    public ArrayList<String> getBoardStateList() {
+    ArrayList<String> getBoardStateList() {
         return boardStateList;
     }
 
@@ -576,57 +618,49 @@ public class BoardAdapter extends BaseAdapter implements Parcelable {
         this.boardStateList = boardStateList;
     }
 
-    public String getBoardCurrentState() {
+    private String getBoardCurrentState() {
         return boardCurrentState;
     }
 
-    public void setBoardCurrentState(String boardCurrentState) {
+    void setBoardCurrentState(String boardCurrentState) {
         this.boardCurrentState = boardCurrentState;
     }
 
-    public ArrayList<BoardCell> getCurrentCellMap()
+    private ArrayList<BoardCell> getCurrentCellMap()
     {
         return this.boardCellMap;
     }
 
-    public String getBoardSolvedState() {
+    String getBoardSolvedState() {
         return boardSolvedState;
     }
 
-    public void setBoardSolvedState(String boardSolvedState) {
+    void setBoardSolvedState(String boardSolvedState) {
         this.boardSolvedState = boardSolvedState;
     }
 
-    public boolean isSolved() {
+    private boolean isSolved() {
         return isSolved;
     }
 
-    public void setSolved(boolean solved) {
+    void setSolved(boolean solved) {
         isSolved = solved;
     }
 
-    public boolean isComplete() {
+    boolean isComplete() {
         return isComplete;
     }
 
-    public void setComplete(boolean complete) {
+    void setComplete(boolean complete) {
         isComplete = complete;
     }
 
-    public boolean isSFull() {
+    boolean isSFull() {
         return isSFull;
     }
 
-    public void setSFull(boolean SFull) {
+    void setSFull(boolean SFull) {
         isSFull = SFull;
-    }
-
-    public Context getContext() {
-        return context;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
     }
 
 }

@@ -1,35 +1,28 @@
 package cpsc463sudoku.sudoku;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 
-import java.util.ArrayList;
-
-/**
- * Created by MarkBallin on 2/13/2017.
- */
-
-public class BoardCell implements Parcelable
+class BoardCell implements Parcelable
 {
-    public static final int EMPTY_CELL = 0;
-    public static final int NUM_NOTES = 9;
-    public static boolean NOTES_SET;
-    private long id;
-    private int currentValue;
-    private boolean isHighlighted;
-    private boolean isSelected;
-    private boolean isInitialValue;
-    private boolean isHint;
-    private boolean isSolved;
-    private boolean isCorrect;
-    private int[] userNotes;
+    static final int EMPTY_CELL = -1;
+    static final int NUM_NOTES = 9;
 
-    public BoardCell()
+    int id;
+    int currentValue;
+    boolean isHighlighted;
+    boolean isSelected;
+    boolean isInitialValue;
+    boolean isHint;
+    boolean isSolved;
+    boolean isCorrect;
+    boolean isNotesSet;
+    int[] userNotes;
+
+    BoardCell()
     {
+        isNotesSet = false;
         this.id = -1;
-        this.NOTES_SET = false;
         this.currentValue = EMPTY_CELL;
         this.isHighlighted = false;
         this.isSelected = false;
@@ -49,9 +42,9 @@ public class BoardCell implements Parcelable
 
     private BoardCell(Parcel in)
     {
-        this.id = in.readLong();
+        this.id = in.readInt();
         this.currentValue = in.readInt();
-        boolean[] bools = {this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect, this.NOTES_SET};
+        boolean[] bools = {this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect, isNotesSet};
         in.readBooleanArray(bools);
         this.userNotes = new int[NUM_NOTES];
         in.readIntArray(this.userNotes);
@@ -61,7 +54,7 @@ public class BoardCell implements Parcelable
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(this.id);
         out.writeInt(this.currentValue);
-        out.writeBooleanArray(new boolean[]{this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect, this.NOTES_SET});
+        out.writeBooleanArray(new boolean[]{this.isHighlighted, this.isSelected, this.isInitialValue, this.isHint, this.isSolved, this.isCorrect, isNotesSet});
         out.writeIntArray(this.userNotes);
     }
 
@@ -71,7 +64,7 @@ public class BoardCell implements Parcelable
         return 1;
     }
 
-    public BoardCell(String newCurrentValue)
+    BoardCell(String newCurrentValue)
     {
         if( isInteger(newCurrentValue) )
         {
@@ -92,7 +85,6 @@ public class BoardCell implements Parcelable
         this.isHighlighted = newBoardCell.isHighlighted();
         this.isSelected = newBoardCell.isSelected();
         this.userNotes = newBoardCell.getUserNotes();
-        this.NOTES_SET = newBoardCell.NOTES_SET;
     }
 
     private boolean isInteger(String s)
@@ -131,71 +123,71 @@ public class BoardCell implements Parcelable
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public int getCurrentValue() {
+    int getCurrentValue() {
         return currentValue;
     }
 
-    public void setCurrentValue(int currentValue) {
+    void setCurrentValue(int currentValue) {
         this.currentValue = currentValue;
     }
 
-    public boolean isHighlighted() {
+    boolean isHighlighted() {
         return isHighlighted;
     }
 
-    public void setHighlighted(boolean highlighted) {
+    void setHighlighted(boolean highlighted) {
         isHighlighted = highlighted;
     }
 
-    public boolean isSelected() {
+    boolean isSelected() {
         return isSelected;
     }
 
-    public void setSelected(boolean selected) {
+    void setSelected(boolean selected) {
         isSelected = selected;
     }
 
-    public int[] getUserNotes() {
+    int[] getUserNotes() {
         return userNotes;
     }
 
-    public void setUserNotes(int[] userNotes) {
+    void setUserNotes(int[] userNotes) {
         this.userNotes = userNotes;
     }
 
-    public boolean isInitialValue() {
+    boolean isInitialValue() {
         return isInitialValue;
     }
 
-    public void setInitialValue(boolean initialValue) {
+    void setInitialValue(boolean initialValue) {
         isInitialValue = initialValue;
     }
 
-    public boolean isHint() {
+    boolean isHint() {
         return isHint;
     }
 
-    public void setHint(boolean hint) {
+    void setHint(boolean hint) {
         isHint = hint;
     }
 
-    public boolean isSolved() {
+    boolean isSolved() {
         return isSolved;
     }
 
-    public void setSolved(boolean solved) {
+    void setSolved(boolean solved) {
         isSolved = solved;
     }
 
-    public boolean isCorrect() {
+    boolean isCorrect() {
         return isCorrect;
     }
 
-    public void setCorrect(boolean correct) {
+    void setCorrect(boolean correct) {
         isCorrect = correct;
     }
 }
