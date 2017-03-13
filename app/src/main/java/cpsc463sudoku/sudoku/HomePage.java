@@ -1,11 +1,10 @@
 package cpsc463sudoku.sudoku;
 
-
-
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,13 +28,11 @@ public class HomePage extends Fragment {
     Button startNewGame;
     GridLayout layoutHolder;
     ViewGroup.LayoutParams params;
-    Fragment frag;
-
+    //Fragment frag;
 
     //Declare variables to manage our fragments
     private FragmentTransaction ft;
-
-
+    public Fragment frag;
 
     public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -68,53 +65,17 @@ public class HomePage extends Fragment {
         styleSettings.setTypeface(customFont, Typeface.BOLD);
         styleScores.setTypeface(customFont, Typeface.BOLD);
 
-
         //Declare buttons to go to new fragments
         startNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment newGame = new PlayGame();
-                Bundle gameState = new Bundle();
-                gameState.putParcelable("gameState", getBoardData());
-                newGame.setArguments(gameState);
-                //ft.hide(frag);
-                ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right,  R.anim.exit_to_left);
-                ft.replace(R.id.activity_main, newGame, "PlayGame");
-                ft.addToBackStack("Home");
+
+                DifficultyPage difficultyfrag = new DifficultyPage();
+                ft.replace(R.id.activity_main, difficultyfrag, "Difficulty");
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
-
         return v;
     }
-
-    public BoardAdapter getBoardData()
-    {
-        File sdcard = Environment.getExternalStorageDirectory();
-        try
-        {
-            File puzzleList = new File(sdcard, "/Download/puzzleList.txt");
-            File solutionList = new File(sdcard, "/Download/solutionList.txt");
-            BufferedReader brpl = new BufferedReader(new FileReader(puzzleList));
-            BufferedReader brsl = new BufferedReader(new FileReader(solutionList));
-            String linepl;
-            String linesl;
-            if ((linepl = brpl.readLine()) != null && (linesl = brsl.readLine()) != null) {
-                BoardAdapter newBoardAdapter = new BoardAdapter(linepl);
-                newBoardAdapter.setBoardSolvedState(linesl);
-                Log.d("Created a new Board: ", newBoardAdapter.toString());
-                Log.d("Its Solution is    : ", newBoardAdapter.getBoardSolvedState());
-                brpl.close();
-                brsl.close();
-                return newBoardAdapter;
-            }
-        }
-        catch(Exception e)
-        {
-            Log.d("Caught Exception: ", e.getMessage());
-            e.printStackTrace();
-        }
-        return new BoardAdapter("");
-    }
-
 }

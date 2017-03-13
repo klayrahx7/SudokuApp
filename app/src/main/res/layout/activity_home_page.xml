@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".HomePage"
-    android:clickable="true">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/activity_main"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".HomePage"
+             android:clickable="true">
     <ImageView
         android:layout_height="match_parent"
         android:cropToPadding="true"
@@ -33,6 +33,7 @@
             android:orientation="horizontal"
             android:backgroundTint="#2D3142"
             android:background="#CC2D3142">
+
             <Button
                 android:id="@+id/startNewGameButton"
                 android:layout_gravity="center|top|left"
@@ -104,8 +105,6 @@
                 android:textAllCaps="true"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF" />
-
-
 
             <Button
                 android:id="@+id/Scores"
