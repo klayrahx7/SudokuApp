@@ -19,6 +19,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+import dalvik.annotation.TestTarget;
+
 public class HomePage extends Fragment {
 
     TextView styleStart;
@@ -77,5 +79,13 @@ public class HomePage extends Fragment {
             }
         });
         return v;
+    }
+
+    public boolean startTest(){
+        if(startNewGame.performClick()){
+            return true;
+        }
+        else
+            return false;
     }
 }
