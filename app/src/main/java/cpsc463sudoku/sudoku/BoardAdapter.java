@@ -207,7 +207,6 @@ class BoardAdapter extends BaseAdapter implements Parcelable {
             holder = (ViewHolder)convertView.getTag();
         }
 
-
         final BoardCell currentCell = getCurrentCellMap().get(position);
         currentCell.setId(position);
 
@@ -250,7 +249,7 @@ class BoardAdapter extends BaseAdapter implements Parcelable {
         // Highlighting for hints
         if(currentCell.isHint())
         {
-            holder.button.setBackgroundColor(ContextCompat.getColor(context, R.color.Highlighted));
+            holder.button.setTextColor(ContextCompat.getColor(context, R.color.Hint));
         }
 
         // Highlighting initial buttons
@@ -292,7 +291,22 @@ class BoardAdapter extends BaseAdapter implements Parcelable {
     // Add new state to the state list
     void advanceBoardState(String newState)
     {
-        boardStatePosition++;
+        // We are at the newest possible state
+        if(this.boardStatePosition == this.boardStateList.size() - 1)
+        {
+            boardStatePosition++;
+        }
+        // There are states in front of us, so we must have pressed undo at some point
+        // Since we are making a change we need to clear the stats in front of us
+        else
+        {
+            int numOfStatesToRemove = this.boardStateList.size() - this.boardStatePosition - 1;
+            while(numOfStatesToRemove > 0)
+            {
+                this.boardStateList.remove(this.boardStateList.size()-1);
+                numOfStatesToRemove--;
+            }
+        }
         this.boardStateList.add(newState);
         this.boardCurrentState = newState;
     }
@@ -328,12 +342,17 @@ class BoardAdapter extends BaseAdapter implements Parcelable {
     private ArrayList<BoardCell> setCurrentCellMap(String newBoardState)
     {
         ArrayList<BoardCell> newList = new ArrayList<>();
+        String initialState = this.boardStateList.get(0);
         for(int i = 0; i < newBoardState.length(); i++)
         {
             BoardCell newBoardCell = new BoardCell(newBoardState.substring(i,i+1));
-            if(newBoardCell.getCurrentValue() != EMPTY_CELL)
+            // Check if the value to add was an initial value.
+            if(!initialState.substring(i,i+1).equals((".")))
             {
                 newBoardCell.setInitialValue(true);
+            }
+            if(newBoardCell.getCurrentValue() != EMPTY_CELL)
+            {
                 newBoardCell.setSolved(true);
             }
             newList.add(newBoardCell);
@@ -564,23 +583,19 @@ class BoardAdapter extends BaseAdapter implements Parcelable {
         return true;
     }
 
-
     /*
     * Asks the solver for a hint on a particular board_cell.
     */
     void getHint(BoardCell newCell)
     {
-        if(this.isSolved) {
-            for (BoardCell i : boardCellMap) {
-                if (i == newCell) {
-                    if (this.boardSolvedState != null) {
-                        i.setCurrentValue(Integer.valueOf(this.boardSolvedState.substring((int)i.getId(), (int)(i.getId() + 1))));
-                        i.setHint(true);
-                    }
-                    else
-                    {
-                        // TODO: Start solving this board and notify the user we have no current hint
-                    }
+        for (BoardCell i : this.boardCellMap)
+        {
+            if (i == newCell)
+            {
+                if (this.boardSolvedState != null)
+                {
+                    i.setCurrentValue(Integer.valueOf(this.boardSolvedState.substring((int)i.getId(), (int)(i.getId() + 1))));
+                    i.setHint(true);
                 }
             }
         }

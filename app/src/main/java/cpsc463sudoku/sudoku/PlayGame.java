@@ -212,7 +212,7 @@ public class PlayGame extends Fragment implements BoardAdapter.boardCallback, Co
         // Set up gridView containing the board
         boardView.setLayoutParams(boardLayoutParams);
         boardView.setAdapter(boardAdapter);
-        boardView.setBackground(res.getDrawable(R.drawable.main_game_board_5));
+        boardView.setBackground(res.getDrawable(R.drawable.main_game_board_6));
 
         // set up gridView containing controlPanel
         controlPanelView.setAdapter(controlPanelAdapter);

@@ -1,8 +1,5 @@
 package cpsc463sudoku.sudoku;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -111,7 +108,7 @@ public class Solver {
 
             //Initializing the columns
             for (int i = 0 ; i < 9 ; i++){
-                List<Element> newList = new ArrayList<Element>(elements.subList(i, i+1));
+                List<Element> newList = new ArrayList<>(elements.subList(i, i+1));
                 newList.addAll(elements.subList(i+9, i+10));
                 newList.addAll(elements.subList(i+18, i + 19));
                 newList.addAll(elements.subList(i+27, i + 28));
