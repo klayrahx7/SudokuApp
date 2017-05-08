@@ -21,13 +21,14 @@ import java.io.FileReader;
 
 import dalvik.annotation.TestTarget;
 
-public class HomePage extends Fragment {
+public class HomePage extends Fragment{
 
     TextView styleStart;
     TextView styleContinue;
     TextView styleSettings;
     TextView styleScores;
     Button startNewGame;
+    Button gotoSettings;
     GridLayout layoutHolder;
     ViewGroup.LayoutParams params;
     //Fragment frag;
@@ -43,6 +44,7 @@ public class HomePage extends Fragment {
         View v = inflater.inflate(R.layout.activity_home_page, container,false);
         //Link our objects to their corresponding ID's in the XML
         startNewGame = (Button)v.findViewById(R.id.startNewGameButton);
+        gotoSettings = (Button)v.findViewById(R.id.Settings);
         styleStart = (TextView)v.findViewById(R.id.startText);
         styleContinue = (TextView)v.findViewById(R.id.continueText);
         styleSettings = (TextView)v.findViewById(R.id.settingsText);
@@ -74,6 +76,16 @@ public class HomePage extends Fragment {
 
                 DifficultyPage difficultyfrag = new DifficultyPage();
                 ft.replace(R.id.activity_main, difficultyfrag, "Difficulty");
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+        gotoSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingsPage settings = new SettingsPage();
+                ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right,  R.anim.exit_to_left);
+                ft.replace(R.id.activity_main, settings, "Settings");
                 ft.addToBackStack(null);
                 ft.commit();
             }
